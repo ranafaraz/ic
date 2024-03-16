@@ -16,4 +16,4 @@ temp/
 .well-known/
 application/config/database.php
 uploads/
-.htaccess/
+.htaccess
