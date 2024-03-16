@@ -12,6 +12,6 @@ application/logs/*
 !application/logs/.htaccess
 temp/
 .idea/
-application/config/database.php
 .ssh/
 .well-known/
+application/config/database.php
