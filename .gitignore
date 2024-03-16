@@ -15,4 +15,5 @@ temp/
 .ssh/
 .well-known/
 application/config/database.php
-uploads
+uploads/
+.htaccess/
