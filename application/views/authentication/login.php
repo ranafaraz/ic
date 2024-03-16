@@ -9,13 +9,13 @@
 	<meta name="author" content="<?php echo $global_config['institute_name'] ?>">
 	<title><?php echo translate('login');?></title>
 	<link rel="shortcut icon" href="<?php echo base_url('assets/images/favicon.png');?>">
-    
+
     <!-- Web Fonts  -->
-	<link href="<?php echo is_secure('fonts.googleapis.com/css?family=Signika:300,400,600,700');?>" rel="stylesheet"> 
+	<link href="<?php echo is_secure('fonts.googleapis.com/css?family=Signika:300,400,600,700');?>" rel="stylesheet">
 	<link rel="stylesheet" href="<?php echo base_url('assets/vendor/bootstrap/css/bootstrap.css');?>">
 	<link rel="stylesheet" href="<?php echo base_url('assets/vendor/font-awesome/css/all.min.css'); ?>">
 	<script src="<?php echo base_url('assets/vendor/jquery/jquery.js');?>"></script>
-	
+
 	<!-- sweetalert js/css -->
 	<link rel="stylesheet" href="<?php echo base_url('assets/vendor/sweetalert/sweetalert-custom.css');?>">
 	<script src="<?php echo base_url('assets/vendor/sweetalert/sweetalert.min.js');?>"></script>
@@ -37,11 +37,11 @@
                                 <h2><?php echo translate('welcome_to');?></h2>
                             </div>
                             <div class="center img-hol-p">
-                                <img src="<?=$this->application_model->getBranchImage($branch_id, 'logo')?>" height="60" alt="School">
+                                <img src="<?=$this->application_model->getBranchImage($branch_id, 'logo')?>" height="150" alt="School">
                             </div>
                             <div class="address">
                                 <p><?php echo $global_config['address'];?></p>
-                            </div>			
+                            </div>
                             <div class="f-social-links center">
                                 <a href="<?php echo $global_config['facebook_url'];?>" target="_blank">
                                     <span class="fab fa-facebook-f"></span>
@@ -64,7 +64,7 @@
                     <div class="col-lg-6 col-lg-offset-right-1 col-md-6 col-md-offset-right-1 col-sm-12 col-xs-12 no-padding">
                         <div class="sign-area">
                             <div class="sign-hader">
-                                <img src="<?=$this->application_model->getBranchImage($branch_id, 'logo')?>" height="54" alt="">
+                                <img src="<?=$this->application_model->getBranchImage($branch_id, 'logo')?>" height="100" alt="">
                                 <h2><?php echo $global_config['institute_name'];?></h2>
                             </div>
                             <?php echo form_open($this->uri->uri_string()); ?>
@@ -103,7 +103,7 @@
                                     </button>
                                 </div>
                                 <div class="sign-footer">
-                                    <p><?php echo $global_config['footer_text'];?></p>
+                                    <p style="color:red;"><?php echo $global_config['footer_text'];?></p>
                                 </div>
                             <?php echo form_close();?>
                         </div>
@@ -111,7 +111,7 @@
                 </div>
             </div>
         </div>
-        
+
 		<script src="<?php echo base_url('assets/vendor/bootstrap/js/bootstrap.js');?>"></script>
 		<script src="<?php echo base_url('assets/vendor/jquery-placeholder/jquery-placeholder.js');?>"></script>
 		<!-- backstretch js -->
