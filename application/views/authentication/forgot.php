@@ -11,11 +11,11 @@
 	<link rel="shortcut icon" href="<?php echo base_url('assets/images/favicon.png');?>">
 
     <!-- Web Fonts  -->
-	<link href="<?php echo is_secure('fonts.googleapis.com/css?family=Signika:300,400,600,700');?>" rel="stylesheet"> 
+	<link href="<?php echo is_secure('fonts.googleapis.com/css?family=Signika:300,400,600,700');?>" rel="stylesheet">
 	<link rel="stylesheet" href="<?php echo base_url('assets/vendor/bootstrap/css/bootstrap.css');?>">
 	<link rel="stylesheet" href="<?php echo base_url('assets/vendor/font-awesome/css/all.min.css'); ?>">
 	<script src="<?php echo base_url('assets/vendor/jquery/jquery.js');?>"></script>
-	
+
 	<!-- sweetalert js/css -->
 	<link rel="stylesheet" href="<?php echo base_url('assets/vendor/sweetalert/sweetalert-custom.css');?>">
 	<script src="<?php echo base_url('assets/vendor/sweetalert/sweetalert.min.js');?>"></script>
@@ -37,11 +37,11 @@
                                 <h2><?php echo translate('welcome_to');?></h2>
                             </div>
                             <div class="center img-hol-p">
-                                <img src="<?=$this->application_model->getBranchImage($branch_id, 'logo')?>" height="60" alt="">
+                                <img src="<?=$this->application_model->getBranchImage($branch_id, 'logo')?>" height="150" alt="">
                             </div>
                             <div class="address">
                                 <p><?php echo $global_config['address'];?></p>
-                            </div>          
+                            </div>
                             <div class="f-social-links center">
                                 <a href="<?php echo $global_config['facebook_url'];?>" target="_blank">
                                     <span class="fab fa-facebook-f"></span>
@@ -64,10 +64,10 @@
                     <div class="col-lg-6 col-lg-offset-right-1 col-md-6 col-md-offset-right-1 col-sm-12 col-xs-12 no-padding">
                         <div class="sign-area">
                             <div class="sign-hader pt-md">
-                                <img src="<?=$this->application_model->getBranchImage($branch_id, 'logo')?>" height="54" alt="" >
+                                <img src="<?=$this->application_model->getBranchImage($branch_id, 'logo')?>" height="100" alt="" >
                                 <h2><?=$global_config['institute_name']?></h2>
                             </div>
-                                <?php 
+                                <?php
                                     if($this->session->flashdata('reset_res')){
                                         if($this->session->flashdata('reset_res') == 'true'){
                                             echo '<div class="alert-msg">Password reset email sent successfully. Check email</div>';
