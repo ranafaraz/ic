@@ -1,16 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-/**
- * @package : Ramom school management system
- * @version : 6.0
- * @developed by : RamomCoder
- * @support : ramomcoder@yahoo.com
- * @author url : http://codecanyon.net/user/RamomCoder
- * @filename : Home.php
- * @copyright : Reserved RamomCoder Team
- */
-
 class Home extends Frontend_Controller
 {
     public function __construct()
@@ -102,7 +92,9 @@ class Home extends Frontend_Controller
         if (!$this->data['cms_setting']['online_admission']) {
             redirect(site_url('home'));
         }
-        $branchID = $this->home_model->getDefaultBranch();
+
+        $branchID = $_GET['branch_id'] ?? $this->home_model->getDefaultBranch();
+
         $captcha = $this->data['cms_setting']['captcha_status'];
         if ($captcha == 'enable') {
             $this->load->library('recaptcha');
