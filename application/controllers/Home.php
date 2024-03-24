@@ -21,7 +21,7 @@ class Home extends Frontend_Controller
 
     public function home()
     {
-        $branchID = $this->home_model->getDefaultBranch();
+        $branchID = $_GET['branch_id'] ?? $this->home_model->getDefaultBranch();
         $this->data['branchID'] = $branchID;
         $this->data['sliders'] = $this->home_model->getCmsHome('slider', $branchID, 1, false);
         $this->data['features'] = $this->home_model->getCmsHome('features', $branchID, 1, false);
@@ -244,7 +244,7 @@ class Home extends Frontend_Controller
             exit();
         }
 
-        $this->data['branchID'] = $branchID;
+        $this->data['branchID'] = $_GET['branch_id'] ?? $branchID;
         $this->data['page_data'] = $this->home_model->get('front_cms_admission', array('branch_id' => $branchID), true);
         $this->data['main_contents'] = $this->load->view('home/admission', $this->data, true);
         $this->load->view('home/layout/index', $this->data);
