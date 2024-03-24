@@ -73,7 +73,7 @@ class Inventory extends Admin_Controller
         $branchID = $this->application_model->get_branch_id();
         $this->data['branch_id'] = $branchID;
         $this->data['productlist'] = $this->inventory_model->get_product_list();
-        $this->data['unitlist'] = $this->app_lib->getSelectByBranch('product_category', $branchID);
+        $this->data['unitlist'] = $this->app_lib->getSelectByBranch('product_unit', $branchID);
         $this->data['title'] = translate('inventory');
         $this->data['sub_page'] = 'inventory/product';
         $this->data['main_menu'] = 'inventory';
