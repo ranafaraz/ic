@@ -1,16 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-/**
- * @package : Ramom school management system
- * @version : 6.0
- * @developed by : RamomCoder
- * @support : ramomcoder@yahoo.com
- * @author url : http://codecanyon.net/user/RamomCoder
- * @filename : School_settings.php
- * @copyright : Reserved RamomCoder Team
- */
-
 class School_settings extends Admin_Controller
 {
     public function __construct()
@@ -914,7 +904,7 @@ class School_settings extends Admin_Controller
                 $data = array();
                 $data['branch_id'] = $branchID;
                 $data['recipient'] = $recipient;
-                $data['subject'] = 'Ramom School SMTP Config Testing';
+                $data['subject'] = 'Institute on Cloud SMTP Config Testing';
                 $data['message'] = 'This is test SMTP config email. <br />If you received this message that means that your SMTP settings is set correctly.';
                 $r = $this->mailer->send($data, true);
                 if ($r == "true") {
