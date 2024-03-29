@@ -1,16 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-/**
- * @package : Ramom school management system
- * @version : 5.0
- * @developed by : RamomCoder
- * @support : ramomcoder@yahoo.com
- * @author url : http://codecanyon.net/user/RamomCoder
- * @filename : Reception.php
- * @copyright : Reserved RamomCoder Team
- */
-
 class Reception extends Admin_Controller
 {
     public function __construct()
@@ -500,9 +490,9 @@ class Reception extends Admin_Controller
         $this->form_validation->set_rules('name', translate('name'), 'trim|required');
         $this->form_validation->set_rules('gender', translate('gender'), 'trim|required');
         $this->form_validation->set_rules('father_name', translate('father_name'), 'trim|required');
-        $this->form_validation->set_rules('mother_name', translate('mother_name'), 'trim|required');
+        $this->form_validation->set_rules('mother_name', translate('mother_name'), 'trim');
         $this->form_validation->set_rules('mobile_no', translate('mobile_no'), 'trim|required|numeric');
-        $this->form_validation->set_rules('no_of_child', translate('no_of_child'), 'trim|required|numeric');
+        $this->form_validation->set_rules('no_of_child', translate('no_of_child'), 'trim|numeric');
         $this->form_validation->set_rules('staff_id', translate('assigned'), 'trim|required');
         $this->form_validation->set_rules('reference', translate('reference'), 'trim|required');
         $this->form_validation->set_rules('response_id', translate('reference'), 'trim|required');

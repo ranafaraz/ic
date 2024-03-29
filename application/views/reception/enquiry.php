@@ -151,7 +151,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-md-3 control-label"><?=translate('mother_name')?> <span class="required">*</span></label>
+						<label class="col-md-3 control-label"><?=translate('mother_name')?> </label>
 						<div class="col-md-6">
 							<input type="text" class="form-control" name="mother_name" value="" />
 							<span class="error"></span>
