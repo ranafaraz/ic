@@ -69,7 +69,7 @@ class Authentication_model extends MY_Model
         $saasExisting = $this->app_lib->isExistingAddon('saas');
         if ($saasExisting && $this->db->table_exists("custom_domain")) {
             $getDomain = $this->getCurrentDomain();
-            if(!empty($getDomain)) {
+            if (!empty($getDomain)) {
                 return $getDomain->school_id;
             }
         }
@@ -96,14 +96,13 @@ class Authentication_model extends MY_Model
     {
         $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         $url = rtrim($url, '/');
-        $domain =  parse_url($url, PHP_URL_HOST);
+        $domain = parse_url($url, PHP_URL_HOST);
         if (substr($domain, 0, 4) == 'www.') {
             $domain = str_replace('www.', '', $domain);
         }
         $getDomain = $this->db->select('school_id')->get_where('custom_domain', array('status' => 1, 'url' => $domain))->row();
         return $getDomain;
     }
-
 
     public function getSchoolDeatls($url_alias = '')
     {
@@ -123,5 +122,15 @@ class Authentication_model extends MY_Model
         }
     }
 
-
+    public function getStudentLoginStatus($id = '')
+    {
+        $get = $this->db->select('IFNULL(student_login, 1) as login')->where('id', $id)->get('branch')->row()->login;
+        return $get;
+    }
+    
+    public function getParentLoginStatus($id = '')
+    {
+        $get = $this->db->select('IFNULL(parent_login, 1) as login')->where('id', $id)->get('branch')->row()->login;
+        return $get;
+    }
 }

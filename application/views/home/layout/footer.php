@@ -8,16 +8,16 @@
                         <img src="<?php echo base_url('uploads/frontend/images/' . $cms_setting['logo']); ?>" alt="Logo">
                     </div>
                     <?php if ($global_config['footer_branch_switcher']) {  ?>
-<!--                    <div class="footer-select mb-3 mt-4">-->
-<!--                        <div class="form-group">-->
+                    <div class="footer-select mb-3 mt-4">
+                        <div class="form-group">
                             <?php
                                 $branch_list = $this->home_model->branch_list();
                                 $default_branch = $this->home_model->getDefaultBranch();
-                               // echo form_dropdown("branch_id", $branch_list, $default_branch, "class='form-control' id='activateSchool'
-                               // data-plugin-selectTwo");
+                                echo form_dropdown("branch_id", $branch_list, $default_branch, "class='form-control' id='activateSchool'
+                                data-plugin-selectTwo");
                             ?>
-<!--                        </div>-->
-<!--                    </div>-->
+                        </div>
+                    </div>
                     <?php } ?>
                     <p class="footer-dec"><?php echo $cms_setting['footer_about_text']; ?></p>
                     <ul class="social">
@@ -149,6 +149,7 @@ if ($config['frontend_enable_chat'] == 1) {
 <script src="<?php echo base_url('assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js'); ?>"></script>
 <script src="<?php echo base_url('assets/vendor/sweetalert/sweetalert.min.js');?>"></script>
 <script src="<?php echo base_url('assets/frontend/plugins/magnific-popup/jquery.magnific-popup.min.js');?>"></script>
+<script src="<?php echo base_url('assets/frontend/js/jquery.marquee.min.js');?>"></script>
 <script src="<?php echo base_url('assets/frontend/js/custom.js'); ?>"></script>
 
 <?php

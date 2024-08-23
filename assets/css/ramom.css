@@ -1604,3 +1604,57 @@ html.dark .select2loading {
 .dashboard-page .widget-row-in .panel-body {
 	background-color: transparent;
 }
+
+/* Magnific Popup Custom CSS */
+.mfp-bg {
+	background: #fff;
+	filter: blur(4px);
+}
+
+html.dark .mfp-bg {
+	background: #717171;
+	filter: blur(4px);
+}
+
+.mfp-content .zoom-anim-dialog > .panel {
+	-webkit-box-shadow: 6px 8px 8px rgba(0, 0, 0, 0.1) !important;
+  	box-shadow: 6px 8px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.mfp-content .panel-heading {
+	background-color: transparent;
+	border-bottom-width: 1px;
+}
+
+.au-none {
+	text-decoration: none !important;
+}
+
+ul.sibling {
+	padding: 0;
+}
+ul.sibling li {
+	list-style-type: none;
+	margin-bottom: 0;
+	padding: 5px;
+	border-radius: 0;
+	border-bottom: #ddd 1px solid;
+}
+
+ul.sibling li:last-child {
+	border-bottom: 0;
+}
+
+html.dark ul.sibling li {
+	border-color: #424447;
+}
+
+.btn-collect-fees {
+	padding: 5px 13px !important;
+	font-size: 13px !important;
+	color: #333 !important;
+}
+
+html.dark .btn-collect-fees {
+	color: #EEE !important;
+}

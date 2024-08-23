@@ -72,7 +72,7 @@ $currency_symbol = $global_config['currency_symbol'];
 							<th><?php echo translate('allowance'); ?> (+)</th>
 							<th><?php echo translate('deduction'); ?> (-)</th>
 							<th><?php echo translate('net') . " " . translate('salary'); ?></th>
-							<th><?php echo translate('pay_via'); ?></th>
+							<th class="isExport"><?php echo translate('pay_via'); ?></th>
 						</tr>
 					</thead>
 					<tbody>

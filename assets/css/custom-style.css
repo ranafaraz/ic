@@ -11330,8 +11330,12 @@ html.dark div.DTTT_container .btn {
 
 .fileupload .uneditable-input .fas {
 	position: absolute;
-	top: 12px;
-	left: 26px;
+	top: 9px;
+	left: 10px;
+}
+
+.fileupload .uneditable-input {
+	position: relative;
 }
 
 .fileupload .uneditable-input .fileupload-preview {
@@ -13179,5 +13183,3 @@ ul.stu-disabled li:last-child {
 	padding-right: 10px;
 	font-weight: 600;
 }
-
-

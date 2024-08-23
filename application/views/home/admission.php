@@ -1,25 +1,27 @@
 <!-- Main Banner Starts -->
-<!--<div class="main-banner" style="background: url(<?php //// echo base_url('uploads/frontend/banners/' . $page_data['banner_image']); ?>) center top;">-->
-<!--    <div class="container px-md-0">-->
-<!--        <h2><span>--><?php //echo $page_data['page_title']; ?><!--</span></h2>-->
-<!--    </div>-->
-<!--</div>-->
+<div class="main-banner" style="background: url(<?php echo base_url('uploads/frontend/banners/' . $page_data['banner_image']); ?>) center top;">
+    <div class="container px-md-0">
+        <h2><span><?php echo $page_data['page_title']; ?></span></h2>
+    </div>
+</div>
 <!-- Main Banner Ends -->
 <!-- Breadcrumb Starts -->
-<!--<div class="breadcrumb">-->
-<!--    <div class="container px-md-0">-->
-<!--        <ul class="list-unstyled list-inline">-->
-<!--            <li class="list-inline-item"><a href="--><?php //echo base_url('home') ?><!--">Home</a></li>-->
-<!--            <li class="list-inline-item active">--><?php //echo $page_data['page_title']; ?><!--</li>-->
-<!--        </ul>-->
-<!--    </div>-->
-<!--</div>-->
+<div class="breadcrumb">
+    <div class="container px-md-0">
+        <ul class="list-unstyled list-inline">
+            <li class="list-inline-item"><a href="<?php echo base_url('home') ?>">Home</a></li>
+            <li class="list-inline-item active"><?php echo $page_data['page_title']; ?></li>
+        </ul>
+    </div>
+</div>
 <!-- Breadcrumb Ends -->
 <!-- Main Container Starts -->
 <div class="container px-md-0 main-container">
     <h3 class="main-heading2 mt-0"><?php echo $page_data['title']; ?></h3>
     <?php echo $page_data['description']; ?>
-    <div class="box2 form-box">
+
+    <div class="box2 form-box position-relative">
+        <button type="submit" class="btn btn-1 admission-status-btn" data-bs-toggle="modal" data-bs-target="#admissionModal"><i class="fa-solid fa-file-lines"></i> Check Addmision Status</button>
         <div class="tabs-panel tabs-product">
             <div class="nav nav-tabs">
                 <a class="nav-item nav-link active" data-toggle="tab" href="#new-admission" role="tab" aria-controls="tab-details" aria-selected="true">New Admission</a>
@@ -555,6 +557,31 @@
                     <?php echo form_close(); ?>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade modal-lg" id="admissionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <?php echo form_open('home/checkAdmissionStatus', array('class' => 'form-horizontal frm-submit-data')); ?>
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Check Addmision Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mt-3 mb-3">
+                    <label>Enter Your Reference Number <span class="required">*</span></label>
+                    <input type="text" class="form-control" name="refno" id="refno" autocomplete="off">
+                    <span class="error"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" data-loading-text="<i class='fas fa-spinner fa-spin'></i> Processing" class="btn btn-primary">Check Now</button>
+            </div>
+            <?php echo form_close(); ?>
         </div>
     </div>
 </div>

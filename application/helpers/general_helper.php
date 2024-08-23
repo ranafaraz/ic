@@ -563,6 +563,7 @@ function currencyFormat($amount = 0)
     $currency_formats   = $array['currency_formats'];
     $symbol_position    = $array['symbol_position'];
 
+    $amount = empty($amount) ? 0 : $amount;
     $value = $amount;
     if ($currency_formats == 1) {
         $value = number_format($amount, 2, '.', '');
@@ -628,4 +629,11 @@ function moneyFormatIndia($num)
         $thecash = $num;
     }
     return "$thecash.$des"; // writes the final format where $currency is the currency symbol.
+}
+
+function getEnrollToStudentID($enroll_id = '')
+{
+    $CI = &get_instance();
+    $get = $CI->db->select('student_id')->from('enroll')->where('id', $enroll_id)->limit(1)->get()->row()->student_id;
+    return $get;
 }

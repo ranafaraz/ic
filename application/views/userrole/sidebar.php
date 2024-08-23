@@ -158,11 +158,23 @@ if ((is_parent_loggedin() && !empty(get_activeChildren_id())) || is_student_logg
                     </li>
 
                     <!-- attendance control -->
+
+<?php 
+$getAttendanceType = $this->app_lib->getAttendanceType();
+if ($getAttendanceType == 2 || $getAttendanceType == 0) { ?>
+
                     <li class="<?php if ($main_menu == 'attendance') echo ' nav-active'; ?>">
                         <a href="<?=base_url('userrole/attendance')?>">
                             <i class="icons icon-chart"></i><span><?=translate('attendance')?></span>
                         </a>
                     </li>
+<?php } if ($getAttendanceType == 2 || $getAttendanceType == 1) { ?>
+                    <li class="<?php if ($main_menu == 'attendance') echo ' nav-active'; ?>">
+                        <a href="<?=base_url('userrole/subject_wise_attendance')?>">
+                            <i class="icons icon-chart"></i><span><?= translate('period') . " " . translate('attendance')?></span>
+                        </a>
+                    </li>
+<?php } ?>
 
                     <li class="nav-parent <?php if ($main_menu == 'library') echo 'nav-expanded nav-active';?>">
                         <a>

@@ -60,6 +60,7 @@
 									<input class="exam-status-switch" id="switchStatus_<?=$row['id']?>" data-id="<?=$row['id']?>" name="evt_switch<?=$row['id']?>" 
 									type="checkbox" <?php echo ($row['status'] == 1 ? 'checked' : ''); ?> />
 									<label for="switchStatus_<?=$row['id']?>" class="label-primary"></label>
+									<span class="visible-print-block"><?php echo ($row['status'] == 1 ? translate('yes') : translate('no')); ?></span>
 								</div>
 							</td>
 							<td>
@@ -68,9 +69,10 @@
 									type="checkbox" <?php echo ($row['publish_result'] == 1 ? 'checked' : ''); ?> />
 									<label for="switchResult_<?=$row['id']?>" class="label-primary"></label>
 								</div>
+								<span class="visible-print-block"><?php echo ($row['publish_result'] == 1 ? translate('yes') : translate('no')); ?></span>
 							</td>
 							<td><?php echo $row['remark']; ?></td>
-							<td class="min-w-xs">
+							<td class="action">
 							<?php if (get_permission('exam', 'is_edit')): ?>
 								<!-- updatr link -->
 								<a href="<?php echo base_url('exam/edit/' . $row['id']);?>" class="btn btn-default btn-circle icon">

@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 5.0
+ * @version : 6.5
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -42,7 +42,6 @@ class System_update extends Admin_Controller
                         $this->data['update_errors'] = $get_update_info;
                         $this->data['latest_version'] = "0.0.0";
                         $this->data['support_expiry_date'] = "-/-/-";
-                        $this->data['purchase_code'] = "";
                         $this->data['block'] = 0;
                     } else {
                         $get_update_info = json_decode($get_update_info);
@@ -66,7 +65,6 @@ class System_update extends Admin_Controller
         } else {
             $this->data['zip_extension'] = 1;
         }
-
         $this->data['current_version'] = $this->system_update_model->get_current_db_version();
         $this->data['title'] = translate('system_update');
         $this->data['sub_page'] = 'system_update/index';

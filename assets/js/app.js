@@ -28,7 +28,7 @@ $.extend(theme.PluginDatePicker.defaults, {
 				titleAttr: 'Copy',
 				title: $('.export_title').html(),
 				exportOptions: {
-					columns: ':visible'
+					columns: [':not(:last-child, th.no-export)','th.isExport']
 				}
 			},
 			{
@@ -37,7 +37,7 @@ $.extend(theme.PluginDatePicker.defaults, {
 				titleAttr: 'Excel',
 				title: $('.export_title').html(),
 				exportOptions: {
-					columns: ':visible'
+					columns: [':not(:last-child, th.no-export)','th.isExport']
 				}
 			},
 			{
@@ -46,22 +46,24 @@ $.extend(theme.PluginDatePicker.defaults, {
 				titleAttr: 'CSV',
 				title: $('.export_title').html(),
 				exportOptions: {
-					columns: ':visible'
+					columns: [':not(:last-child, th.no-export)','th.isExport']
 				}
 			},
 			{
 				extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'A4',
 				text: '<i class="fa fa-file-pdf"></i>',
 				titleAttr: 'PDF',
 				title: $('.export_title').html(),
 				footer: true,
 				customize: function ( win ) {
-					win.styles.tableHeader.fontSize = 10;
-					win.styles.tableFooter.fontSize = 10;
+					win.styles.tableHeader.fontSize = 11;
+					win.styles.tableFooter.fontSize = 11;
 					win.styles.tableHeader.alignment = 'left';
 				},
 				exportOptions: {
-					columns: ':visible'
+					columns: [':not(:last-child, th.no-export)','th.isExport']
 				}
 			},
 			{
@@ -82,7 +84,8 @@ $.extend(theme.PluginDatePicker.defaults, {
 				},
 				footer: true,
 				exportOptions: {
-					columns: ':visible'
+					stripHtml:false,
+					columns: [':not(:last-child, th.no-export)','th.isExport']
 				}
 			},
 			{

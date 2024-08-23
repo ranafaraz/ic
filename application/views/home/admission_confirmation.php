@@ -35,7 +35,6 @@
         	<div id="card_holder">
                 <button type="button" class="btn btn-1" id="print"><i class="fas fa-print"></i> <?=translate('print')?></button>
                 <div id="card">
-                    	
 				<style type="text/css">
 					@media print {
 						.pagebreak {
@@ -55,27 +54,64 @@
 					    width: 100%;
 					    margin: 0 auto;
 					}
+		            .status-list {
+		                margin: 0;
+		                padding: 0;
+		                list-style: none;
+		            }
+		            .status-list li {
+		                display: inline-block;
+		                text-align: center;
+		                border: 1px solid #ddd;
+		                padding: 9px 14px;
+		                border-radius: 4px;
+		                font-size: 13px;
+		                margin-top: 0.5rem;
+		                background-color: #cff4fc;
+		            }
+		            .status-list li span {
+		                font-weight: bold;
+		                display: block;
+		            }
 				</style>
 				<?php $getSchool = $this->db->where(array('id' => $student['branch_id']))->get('branch')->row_array(); ?>
 					<div class="mark-container">
 						<table border="0" style="margin-top: 20px; height: 100px;">
 							<tbody>
 								<tr>
-								<td style="width:40%;vertical-align: top;"><img style="max-width:225px;" src="<?=$this->application_model->getBranchImage($student['branch_id'], 'report-card-logo')?>"></td>
-								<td style="width:60%;vertical-align: top;">
-									<table align="right" class="table-head text-right" >
-										<tbody>
-											<tr><th style="font-size: 26px;" class="text-right"><?=$getSchool['school_name']?></th></tr>
-											<tr><td><?=$getSchool['address']?></td></tr>
-											<tr><td><?=$getSchool['mobileno']?></td></tr>
-											<tr><td><?=$getSchool['email']?></td></tr>
-										</tbody>
-									</table>
-								</td>
+									<td style="width:40%;vertical-align: top;"><img style="max-width:225px;" src="<?=$this->application_model->getBranchImage($student['branch_id'], 'report-card-logo')?>"></td>
+									<td style="width:60%;vertical-align: top;">
+										<table align="right" class="table-head text-right" >
+											<tbody style="text-align: right;">
+												<tr><th style="font-size: 26px;" class="text-right"><?=$getSchool['school_name']?></th></tr>
+												<tr><td><?=$getSchool['address']?></td></tr>
+												<tr><td><?=$getSchool['mobileno']?></td></tr>
+												<tr><td><?=$getSchool['email']?></td></tr>
+											</tbody>
+										</table>
+									</td>
 								</tr>
 							</tbody>
 						</table>
 						<h4 style="padding-top: 30px">Admission Form (Student Copy)</h4>
+						<ul class="status-list">
+							<li>Reference No<span><?php echo empty($student['reference_no']) ? "N/A" : $student['reference_no']; ?></span></li>
+							<li>Admission Status <?php
+								if ($student['status'] == 1)
+									$status = '<span class="text-info">' . translate('under_review') . '</span>';
+								else if ($student['status']  == 2)
+									$status = '<span class="text-success">' . translate('approved') . '</span>';
+								else if ($student['status']  == 3)
+									$status = '<span class="text-danger">' . translate('declined') . '</span>';
+								echo ($status);
+								?></li>
+							<li>Payment Status<?php if ($student['payment_status'] == 0) { ?>
+							    <span class="text-warning">Unpaid</span>
+							    <?php } else if ($student['payment_status'] == 1) { ?>
+							    <span class="text-success">Paid</span>
+							    <?php } ?></li>
+						</ul>
+
 						<table class="table table-condensed table-bordered" style="margin-top: 20px;">
 							<tbody>
 								<tr>
@@ -117,10 +153,7 @@
 									<th>Father Name</td>
 									<td><?=(empty($student['father_name'])) ? "N/A" : $student['father_name'] ?></td>
 									<th>Apply Date</td>
-									<td><?=_d($student['apply_date'])?></td>
-									<th>Date of Birth</td>
-									<td><?=_d($student['birthday'])?></td>
-								</tr>
+									<td colspan="4"><?=_d($student['apply_date'])?></td>								</tr>
 								<tr>
 									<th>Mother Name</td>
 									<td><?=(empty($student['mother_name'])) ? "N/A" : $student['mother_name'] ?></td>
@@ -130,12 +163,32 @@
 									<td><?=(empty($student['section_name'])) ? "N/A" : $student['section_name'] ?></td>
 								</tr>
 								<tr>
-									<th>Address</td>
-									<td colspan="6"><?=(empty($student['address'])) ? "N/A" : $student['address'] ?></td>
+									<th>Present Address</td>
+									<td colspan="2"><?=(empty($student['present_address'])) ? "N/A" : $student['present_address'] ?></td>
+									<th>Permanent Address</td>
+									<td colspan="2"><?=(empty($student['permanent_address'])) ? "N/A" : $student['permanent_address'] ?></td>
 								</tr>
+						<?php 
+						$show_custom_fields = custom_form_table('student', $student['branch_id']);
+						if (!empty($show_custom_fields)) {
+							foreach(array_chunk($show_custom_fields, 3) as $linkGroup) { 
+								$colspan = "";
+								$groupNo = count($linkGroup);
+								if ($groupNo < 3) {
+									$colspan = " colspan= '" . (6 - $groupNo) . "'";
+								} ?>
+								<tr>
+									<?php
+										$i = 1;
+										foreach($linkGroup as $link) {
+									?>
+									<th><?php echo $link['field_label'] ?></th>   
+									<td<?php echo ($groupNo == $i ? $colspan : ''); ?>><?php echo get_online_custom_table_custom_field_value($link['id'], $student['id']);?></td>        
+									<?php $i++; } ?>
+								</tr>
+						<?php } } ?>
 							</tbody>
 						</table>
-
 						<table class="table table-condensed table-bordered" style="margin-top: 20px;">
 							<tbody>
 								<tr>
@@ -188,27 +241,20 @@
     $(document).ready(function () {
         $('#print').on('click', function(e){
             var oContent = document.getElementById('card').innerHTML;
-            var frame1 = document.createElement('iframe');
-            frame1.name = "frame1";
-            frame1.style.position = "absolute";
-            frame1.style.top = "-1000000px";
-            document.body.appendChild(frame1);
-            var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1.contentDocument.document : frame1.contentDocument;
-            frameDoc.document.open();
-            //Create a new HTML document.
-            frameDoc.document.write('<html><head><title></title>');
-            frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/vendor/bootstrap/css/bootstrap.min.css">');
-            frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/custom-style.css">');
-            frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/certificate.css">');
-            frameDoc.document.write('</head><body>');
-            frameDoc.document.write(oContent);
-            frameDoc.document.write('</body></html>');
-            frameDoc.document.close();
-            setTimeout(function () {
-                window.frames["frame1"].focus();
-                window.frames["frame1"].print();
-                frame1.remove();
-            }, 500);
+		    var frameDoc=window.open('', 'document-print');
+		    frameDoc.document.open();
+		    //create a new HTML document.
+		    frameDoc.document.write('<html><head><title></title>');
+		    frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/vendor/bootstrap/css/bootstrap.min.css">');
+		    frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/custom-style.css">');
+		    frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/ramom.css">');
+		    frameDoc.document.write('</head><body onload="window.print()">');
+		    frameDoc.document.write(oContent);
+		    frameDoc.document.write('</body></html>');
+		    frameDoc.document.close();
+		    setTimeout(function () {
+		        frameDoc.close();      
+		    }, 5000);
         });
     });
 </script>

@@ -35,7 +35,6 @@ if ($last_name['status'] == 1 || $gender['status'] == 1 || $blood_group['status'
 	$personal = true;
 }
 ?>
-
 <div class="row">
 	<div class="col-md-12 mb-lg">
 		<div class="profile-head">
@@ -51,7 +50,9 @@ if ($last_name['status'] == 1 || $gender['status'] == 1 || $blood_group['status'
 				<p><?=translate('student')  . " / " . $student['category_name']?></p>
 				<ul>
 					<li><div class="icon-holder" data-toggle="tooltip" data-original-title="<?=translate('guardian_name')?>"><i class="fas fa-users"></i></div> <?=(!empty($getParent['name']) ? $getParent['name'] : 'N/A'); ?></li>
+				<?php if (!empty($student['birthday'])) { ?>
 					<li><div class="icon-holder" data-toggle="tooltip" data-original-title="<?=translate('birthday')?>"><i class="fas fa-birthday-cake"></i></div> <?=_d($student['birthday'])?></li>
+				<?php } ?>
 					<li><div class="icon-holder" data-toggle="tooltip" data-original-title="<?=translate('class')?>"><i class="fas fa-school"></i></div> <?=$student['class_name'] . ' ('.$student['section_name'] . ')'?></li>
 					<li><div class="icon-holder" data-toggle="tooltip" data-original-title="<?=translate('mobile_no')?>"><i class="fas fa-phone-volume"></i></div> <?=(!empty($student['mobileno']) ? $student['mobileno'] : 'N/A'); ?></li>
 					<li><div class="icon-holder" data-toggle="tooltip" data-original-title="<?=translate('email')?>"><i class="far fa-envelope"></i></div> <?=$student['email']?></li>
@@ -291,6 +292,7 @@ if ($last_name['status'] == 1 || $gender['status'] == 1 || $blood_group['status'
 								</thead>
 								<tbody>
 									<?php
+									$label_leave = "<span class='text-danger'><b>" . translate('leave') . "</b></span>";
 									$count = 1;
 									$this->db->order_by('id', 'asc');
 									$this->db->where(array('student_id' => $student['id']));
@@ -303,7 +305,7 @@ if ($last_name['status'] == 1 || $gender['status'] == 1 || $blood_group['status'
 											<td><?php echo get_type_name_by_id('class', $history->pre_class) . " (" . get_type_name_by_id('section', $history->pre_section) . ")"; ?></td>
 											<td><?php echo get_type_name_by_id('schoolyear', $history->pre_session, 'school_year'); ?></td>
 											<td><?php echo get_type_name_by_id('class', $history->pro_class) . " (" . get_type_name_by_id('section', $history->pro_section) . ")"; ?></td>
-											<td><?php echo get_type_name_by_id('schoolyear', $history->pro_session, 'school_year'); ?></td>
+											<td><?php echo $history->is_leave == 1 ? $label_leave : get_type_name_by_id('schoolyear', $history->pro_session, 'school_year'); ?></td>
 											<td><?php echo currencyFormat($history->prev_due); ?></td>
 											<td><?php echo _d($history->date);?></td>
 											
@@ -343,7 +345,7 @@ if ($last_name['status'] == 1 || $gender['status'] == 1 || $blood_group['status'
 										$total_paid = 0;
 										$total_balance = 0;
 										$total_amount = 0;
-										$allocations = $this->fees_model->getInvoiceDetails($student['id']);
+										$allocations = $this->fees_model->getInvoiceDetails($student['enrollid']);
 										if (!empty($allocations)) {
 										foreach ($allocations as $fee) {
 											$deposit = $this->fees_model->getStudentFeeDeposit($fee['allocation_id'], $fee['fee_type_id']);

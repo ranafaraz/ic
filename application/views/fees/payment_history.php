@@ -18,7 +18,7 @@ $currency_symbol = $global_config['currency_symbol'];
 							<?php
 								$arrayBranch = $this->app_lib->getSelectList('branch');
 								echo form_dropdown("branch_id", $arrayBranch, set_value('branch_id'), "class='form-control' id='branch_id' onchange='getClassByBranch(this.value)'
-								required data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity'");
+								required data-plugin-selectTwo data-width='100%'");
 							?>
 						</div>
 					</div>
@@ -29,7 +29,7 @@ $currency_symbol = $global_config['currency_symbol'];
 							<?php
 								$arrayClass = $this->app_lib->getClass($branch_id);
 								echo form_dropdown("class_id", $arrayClass, set_value('class_id'), "class='form-control' id='class_id'
-								data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity' ");
+								data-plugin-selectTwo data-width='100%' ");
 							?>
 						</div>
 					</div>
@@ -91,7 +91,7 @@ $currency_symbol = $global_config['currency_symbol'];
 								<th><?=translate('amount')?></th>
 								<th><?=translate('discount')?></th>
 								<th><?=translate('fine')?></th>
-								<th><?=translate('total')?></th>
+								<th class="isExport"><?=translate('total')?></th>
 							</tr>
 						</thead>
 						<tbody>

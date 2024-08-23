@@ -46,7 +46,7 @@
 				}
 			</style>
 			<?php
-				$result = $this->exam_model->getStudentReportCard($stu['student_id'], $examID, get_session_id());
+				$result = $this->exam_model->getStudentReportCard($stu['student_id'], $examID, get_session_id(), $stu['class_id'], $stu['section_id']);
 				if (!empty($result['exam'])) {
 				$student = $result['student'];
 				$getMarksList = $result['exam'];
@@ -97,7 +97,7 @@
 							<th>Mother Name</th>
 							<td><?=$student['mother_name']?></td>
 							<th>Class</th>
-							<td><?=$student['class_name'] . " (" . $student['section_name'] . ")"?></td>
+							<td><?=$student['class'] . " (" . $student['section'] . ")"?></td>
 							<th>Gender</th>
 							<td><?=ucfirst($student['gender'])?></td>
 						</tr>

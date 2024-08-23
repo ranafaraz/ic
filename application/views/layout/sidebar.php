@@ -68,7 +68,7 @@
                                 </a>
                             </li>
                         <?php } if(get_permission('product_store', 'is_view')){ ?>
-                            <li class="<?php if ($sub_page == 'inventory/store') echo 'nav-active'; ?>">
+                            <li class="<?php if ($sub_page == 'inventory/store' || $sub_page == 'inventory/store_edit') echo 'nav-active'; ?>">
                                 <a href="<?php echo base_url('inventory/store'); ?>">
                                     <span><i class="fas fa-caret-right" aria-hidden="true"></i><?php echo translate('store'); ?></span>
                                 </a>
@@ -133,6 +133,7 @@
                             get_permission('frontend_services', 'is_view') ||
                             get_permission('frontend_gallery', 'is_view') ||
                             get_permission('frontend_gallery_category', 'is_view') ||
+                            get_permission('frontend_news', 'is_view') ||
                             get_permission('frontend_faq', 'is_view')) {
                             ?>
                     <!-- Patient Details -->
@@ -211,6 +212,12 @@
                                     <span><i class="fas fa-caret-right"></i><?php echo translate('gallery'); ?></span>
                                 </a>
                             </li>
+                            <?php } if(get_permission('frontend_news', 'is_view')){ ?>
+                            <li class="<?php if ($sub_page == 'frontend/news' || $sub_page == 'frontend/news_edit') echo 'nav-active'; ?>">
+                                <a href="<?php echo base_url('frontend/news/index'); ?>">
+                                    <span><i class="fas fa-caret-right"></i><?php echo translate('news'); ?></span>
+                                </a>
+                            </li>
                             <?php } ?>
                         </ul>
                     </li>
@@ -275,10 +282,10 @@
 
                     <?php
                     if (get_permission('student', 'is_add') ||
-                    get_permission('multiple_import', 'is_add') ||
-                    get_permission('online_admission', 'is_view') ||
-                    get_permission('student_category', 'is_view')) { 
-                    ?>
+                        get_permission('multiple_import', 'is_add') ||
+                        get_permission('online_admission', 'is_view') ||
+                        get_permission('student_category', 'is_view')) { 
+                            ?>
                     <!-- admission -->
                     <li class="nav-parent <?php if ($main_menu == 'admission') echo 'nav-expanded nav-active';?>">
                         <a>
@@ -297,7 +304,16 @@
                                     <span><i class="fas fa-caret-right" aria-hidden="true"></i><?=translate('online_admission')?></span>
                                 </a>
                             </li>
-                        <?php } if(get_permission('multiple_import', 'is_add')){ ?>
+                        <?php } 
+                        if (moduleIsEnabled('multi_class')) {
+                            if(get_permission('multi_class', 'is_add')) { ?>
+
+                            <li class="<?php if ($sub_page == 'multiclass/index') echo 'nav-active';?>">
+                                <a href="<?=base_url('multiclass/index')?>">
+                                    <span><i class="fas fa-caret-right" aria-hidden="true"></i><?=translate('multi_class')?></span>
+                                </a>
+                            </li>
+                        <?php } } if(get_permission('multiple_import', 'is_add')){ ?>
                             <li class="<?php if ($sub_page == 'student/multi_add') echo 'nav-active';?>">
                                 <a href="<?=base_url('student/csv_import')?>">
                                     <span><i class="fas fa-caret-right" aria-hidden="true"></i><?=translate('multiple_import')?></span>
@@ -825,10 +841,11 @@
                     get_permission('exam_timetable', 'is_view') ||
                     get_permission('exam_mark', 'is_view') ||
                     get_permission('generate_position', 'is_view') ||
+                    get_permission('marksheet_template', 'is_view') ||
                     get_permission('exam_grade', 'is_view')) {
                     ?>
                     <!-- exam master -->
-                    <li class="nav-parent <?php if ($main_menu == 'exam' || $main_menu == 'mark' || $main_menu == 'exam_timetable') echo 'nav-expanded nav-active';?>">
+                    <li class="nav-parent <?php if ($main_menu == 'exam' || $main_menu == 'mark' || $main_menu == 'exam_timetable' || $main_menu == 'marksheet_template') echo 'nav-expanded nav-active';?>">
                         <a>
                             <i class="icons icon-book-open" aria-hidden="true"></i><span><?=translate('exam_master')?></span>
                         </a>
@@ -836,12 +853,12 @@
                             <?php
                             if(get_permission('exam', 'is_view') ||
                             get_permission('exam_term', 'is_view') ||
-                            get_permission('exam_term', 'is_view') ||
+                            get_permission('marksheet_template', 'is_view') ||
                             get_permission('mark_distribution', 'is_view') ||
                             get_permission('exam_hall', 'is_view')) {
                             ?>
                             <!-- exam -->
-                            <li class="nav-parent <?php if ($main_menu == 'exam' || $main_menu == 'exam_term' || $main_menu == 'exam_hall') echo 'nav-expanded nav-active';?>">
+                            <li class="nav-parent <?php if ($main_menu == 'exam' || $main_menu == 'exam_term' || $main_menu == 'exam_hall' || $main_menu == 'marksheet_template') echo 'nav-expanded nav-active';?>">
                                 <a>
                                     <i class="fas fa-flask"></i> <span><?=translate('exam')?></span>
                                 </a>
@@ -868,6 +885,12 @@
                                     <li class="<?php if ($sub_page == 'exam/index') echo 'nav-active';?>">
                                         <a href="<?=base_url('exam')?>">
                                             <span><?=translate('exam_setup')?></span>
+                                        </a>
+                                    </li>
+                                    <?php } if (get_permission('marksheet_template', 'is_view')) { ?>
+                                    <li class="<?php if ($sub_page == 'marksheet_template/index') echo 'nav-active';?>">
+                                        <a href="<?=base_url('marksheet_template/index')?>">
+                                            <span><?=translate('marksheet') . " " . translate('template')?></span>
                                         </a>
                                     </li>
                                     <?php } ?>
@@ -1106,13 +1129,22 @@
                             <i class="icons icon-chart"></i><span><?=translate('attendance')?></span>
                         </a>
                         <ul class="nav nav-children">
-                            <?php if(get_permission('student_attendance', 'is_add')) { ?>
+                            <?php if(get_permission('student_attendance', 'is_add')) { 
+                                $getAttendanceType = $this->app_lib->getAttendanceType();
+                                if ($getAttendanceType == 2 || $getAttendanceType == 0) {
+                                ?>
                             <li class="<?php if ($sub_page == 'attendance/student_entries') echo 'nav-active';?>">
                                 <a href="<?=base_url('attendance/student_entry')?>">
                                     <span><i class="fas fa-caret-right"></i><?=translate('student')?></span>
                                 </a>
                             </li>
-                            <?php } if(get_permission('employee_attendance', 'is_add')) { ?>
+                            <?php } if ($getAttendanceType == 2 || $getAttendanceType == 1) { ?>
+                            <li class="<?php if ($sub_page == 'attendance_period/index') echo 'nav-active';?>">
+                                <a href="<?=base_url('attendance_period/index')?>">
+                                    <span><i class="fas fa-caret-right"></i><?=translate('subject_wise')?></span>
+                                </a>
+                            </li>
+                            <?php } } if(get_permission('employee_attendance', 'is_add')) { ?>
                             <li class="<?php if ($sub_page == 'attendance/employees_entries') echo 'nav-active';?>">
                                 <a href="<?=base_url('attendance/employees_entry')?>">
                                     <span><i class="fas fa-caret-right"></i><?=translate('employee')?></span>
@@ -1430,6 +1462,9 @@
                                     <li class="<?php if ($sub_page == 'student/classsection_reports') echo 'nav-active';?>">
                                         <a href="<?=base_url('student/classsection_reports')?>"><?=translate('class_&_section_report')?></a>
                                     </li>
+                                    <li class="<?php if ($sub_page == 'student/sibling_report') echo 'nav-active';?>">
+                                        <a href="<?=base_url('student/sibling_report')?>"><?=translate('sibling_report')?></a>
+                                    </li>
                                 </ul>
                             </li>
                         <?php } ?>
@@ -1488,7 +1523,9 @@
                             <li class="nav-parent <?php if ($main_menu == 'attendance_report') echo 'nav-expanded nav-active'; ?>">
                                 <a><i class="fas fa-print"></i><span><?php echo translate('attendance_reports'); ?></span></a>
                                 <ul class="nav nav-children">
-                                    <?php if(get_permission('student_attendance_report', 'is_view')) { ?>
+                                    <?php if(get_permission('student_attendance_report', 'is_view')) { 
+                                        if ($getAttendanceType == 2 || $getAttendanceType == 0) {
+                                        ?>
                                     <li class="<?php if ($sub_page == 'attendance/student_report') echo 'nav-active';?>">
                                         <a href="<?=base_url('attendance/studentwise_report')?>">
                                             <?=translate('student') . ' ' . translate('reports')?>
@@ -1499,6 +1536,28 @@
                                             <?=translate('student') . ' ' . translate('daily_reports')?>
                                         </a>
                                     </li>
+                                    <li class="<?php if ($sub_page == 'attendance/studentwise_overview') echo 'nav-active';?>">
+                                        <a href="<?=base_url('attendance/studentwise_overview')?>">
+                                            <?=translate('student') . ' ' . translate('overview_reports')?>
+                                        </a>
+                                    </li>
+                                <?php } if ($getAttendanceType == 2 || $getAttendanceType == 1) { ?>
+                                    <li class="<?php if ($sub_page == 'attendance_period/reports') echo 'nav-active';?>">
+                                        <a href="<?=base_url('attendance_period/reports')?>">
+                                            <?=translate('subject_wise_reports') ?>
+                                        </a>
+                                    </li>
+                                    <li class="<?php if ($sub_page == 'attendance_period/reportsbydate') echo 'nav-active';?>">
+                                        <a href="<?=base_url('attendance_period/reportsbydate')?>">
+                                            <?=translate('subject_wise_by') . ' ' . translate('day')?>
+                                        </a>
+                                    </li>
+                                    <li class="<?php if ($sub_page == 'attendance_period/reportbymonth') echo 'nav-active';?>">
+                                        <a href="<?=base_url('attendance_period/reportbymonth')?>">
+                                            <?=translate('subject_wise_by') . ' ' . translate('month')?>
+                                        </a>
+                                    </li>
+                                <?php } ?>
                                     <?php } if(get_permission('employee_attendance_report', 'is_view')) { ?>
                                     <li class="<?php if ($sub_page == 'attendance/employees_report') echo 'nav-active';?>">
                                         <a href="<?=base_url('attendance/employeewise_report')?>">
@@ -1514,7 +1573,7 @@
                                     <?php } ?>
                                 </ul>
                             </li>
-                        <?php }} ?>
+                        <?php } } ?>
                         <?php 
                         if (moduleIsEnabled('human_resource')) {
                             if(get_permission('salary_summary_report', 'is_view') || get_permission('leave_reports', 'is_view')){ ?>
@@ -1598,6 +1657,32 @@
                     </li>
                     <?php } ?>
 
+                    <?php if (moduleIsEnabled('alumni')) { 
+                        if (get_permission('manage_alumni', 'is_view') ||
+                            get_permission('alumni_events', 'is_view')) {
+                        ?>
+                    <!-- alumni -->
+                    <li class="nav-parent <?php if ($main_menu == 'alumni') echo 'nav-expanded nav-active';?>">
+                        <a>
+                            <i class="fa-solid fa-person-chalkboard"></i><span><?=translate('alumni')?></span>
+                        </a>
+                        <ul class="nav nav-children">
+                            <?php if(get_permission('manage_alumni', 'is_view')){ ?>
+                                <li class="<?php if ($sub_page == 'alumni/index') echo 'nav-active'; ?>">
+                                    <a href="<?php echo base_url('alumni/index'); ?>">
+                                        <span><i class="fas fa-caret-right" aria-hidden="true"></i><?php echo translate('manage_alumni'); ?></span>
+                                    </a>
+                                </li>
+                            <?php } if(get_permission('alumni_events', 'is_view')){ ?>
+                            <li class="<?php if ($sub_page == 'alumni/events') echo 'nav-active'; ?>">
+                                <a href="<?php echo base_url('alumni/event'); ?>">
+                                    <span><i class="fas fa-caret-right" aria-hidden="true"></i><?php echo translate('events'); ?></span>
+                                </a>
+                            </li>
+                            <?php } ?>
+                        </ul>
+                    </li>
+                    <?php } } ?>
                     <!-- addon manager -->
                     <?php 
                     if (is_superadmin_loggedin()) { ?>
@@ -1698,7 +1783,14 @@
                                     <span><i class="fas fa-caret-right" aria-hidden="true"></i><?=translate('system_update')?></span>
                                 </a>
                             </li>
+                            <?php } if(get_permission('user_login_log', 'is_view')){ ?>
+                            <li class="<?php if ($sub_page == 'user_login_log/index') echo 'nav-active';?>">
+                                <a href="<?=base_url('user_login_log/index')?>">
+                                    <span><i class="fas fa-caret-right" aria-hidden="true"></i><?=translate('user_login_log')?></span>
+                                </a>
+                            </li>
                             <?php } ?>
+
                         </ul>
                     </li>
                     <?php } ?>

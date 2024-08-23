@@ -179,11 +179,11 @@ if (count($student_array)) {
 						<strong><?=translate('total_paid')?> (<?=translate('with_fine')?>) : </strong> 
 						<?php
 						$numberSPELL = "";
-						$paidWithFine = currencyFormat($total_paid + $total_fine);
+						$paidWithFine = ($total_paid + $total_fine);
 						if ($extINTL == true) {
-							$numberSPELL = ' </br>( ' . ucwords($spellout->format($paidWithFine)) . ' )';
+							$numberSPELL = ' </br>( ' . ucwords($spellout->format(number_format($paidWithFine, 2, '.', ''))) . ' )';
 						}
-						echo $paidWithFine . $numberSPELL;
+						echo currencyFormat($paidWithFine) . $numberSPELL;
 						?>
 					</li>
 					<?php endif; ?>

@@ -103,7 +103,7 @@ $date = date('Y-m-d', strtotime($year . '-' . $month . '-' . $i));
 								<th class="text-center text-success" style="padding-right: 15px !important;">P</th>
 								<th class="text-center text-danger" style="padding-right: 15px !important;">A</th>
 								<th class="text-center text-tertiary" style="padding-right: 15px !important;">L</th>
-								<th class="text-center text-tertiary">HD</th>
+								<th class="text-center text-tertiary isExport">HD</th>
 							</tr>
 						</thead>
 						<tbody>

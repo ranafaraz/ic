@@ -70,6 +70,21 @@ class Sms_model extends CI_Model
         }
     }
 
+    public function alumniEvent($arrayData = [])
+    {
+        $sms_api = $this->application_model->smsServiceProvider($arrayData['branch_id']);
+        $template = $this->db->get_where('sms_template_details', array('template_id' => 11, 'branch_id' => $arrayData['branch_id']))->row_array();
+        if (!empty($template) && $template['notify_student'] == 1 && $sms_api != 'disabled') {
+            $text = str_replace('{student_name}', $arrayData['name'], $template['template_body']);
+            $text = str_replace('{start_date}', $arrayData['from_date'], $text);
+            $text = str_replace('{end_date}', $arrayData['to_date'], $text);
+            $text = str_replace('{event_title}', $arrayData['event_title'], $text);
+            if (!empty($arrayData['mobile_no'])) {
+                $this->_send($sms_api, $arrayData['mobile_no'], $text, $template['dlt_template_id']);
+            }
+        }
+    }
+
     public function feeReminder($stuData, $remData)
     {
         $sms_api = $this->application_model->smsServiceProvider($remData['branch_id']);

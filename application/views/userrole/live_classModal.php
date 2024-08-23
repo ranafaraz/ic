@@ -37,7 +37,7 @@ $getConfig = $this->userrole_model->get('live_class_config', array('branch_id' =
 								}
 								echo "<span class='label " . $labelmode . " '>" . $status . "</span>";
 								?></label><br>
-<?php if ($row['live_class_method'] == 1 && $getConfig['student_api_credential'] ) {
+<?php if (($row['live_class_method'] == 1 && $getConfig['student_api_credential']) || $row['live_class_method'] == 3) {
 	if (empty($row['bbb'])) {
 		$joinURL = "#";
 	} else {

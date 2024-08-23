@@ -75,6 +75,55 @@
 
 	<div class="header-right">
 		<ul class="header-menu">
+<?php 
+if (is_student_loggedin()):
+	$this->db->select('enroll.id,class.name as class_name,section.name as section_name');
+	$this->db->from('enroll');
+	$this->db->join('class', 'class.id = enroll.class_id', 'inner');
+	$this->db->join('section', 'section.id = enroll.section_id', 'inner');
+	$this->db->where('enroll.student_id', get_loggedin_user_id());
+	$this->db->where('enroll.session_id', get_session_id());
+	$this->db->order_by('enroll.id', 'asc');
+	$multiClass = $this->db->get()->result();
+	if (count($multiClass) > 1) {
+	?>
+			<!-- switch class -->
+			<li>
+				<a href="#" class="dropdown-toggle header-menu-icon" data-toggle="dropdown">
+					<i class="fa-solid fa-retweet"></i>
+				</a>
+				<div class="dropdown-menu header-menubox mh-oh">
+					<div class="notification-title">
+						<i class="fa-solid fa-retweet"></i> <?php echo translate('switch_class');?>
+					</div>
+					<div class="content hbox lb-pr">
+						<div class="scrollable visible-slider dh-tf" data-plugin-scrollable>
+							<div class="scrollable-content">
+								<ul>
+<?php
+if ($this->session->has_userdata('enrollID')) {
+	$currentClass = $this->session->userdata('enrollID');
+} else {
+	$currentClass = get_global_setting('translation');
+}
+foreach ($multiClass as $key => $class):
+		?>
+	<li>
+		<a href="<?php echo base_url('userrole/switchClass/' . $class->id);?>">
+			<?php echo $class->class_name . " (" . $class->section_name . ")";  ?>  <?php echo $class->id == $currentClass ? '<i class="fas fa-check"></i>' : ''; ?>
+		</a>
+	</li>
+<?php endforeach;?>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</li>
+<?php  } 
+	endif;
+	?>
+
 		<?php 
 		$showwebURL = false;
 		$webURL = "";

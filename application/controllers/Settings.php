@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.2
+ * @version : 6.5
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -54,6 +54,10 @@ class Settings extends Admin_Controller
             }
             $this->db->where('id', 1);
             $this->db->update('global_settings', $config);
+
+            $isRTL = $this->app_lib->getRTLStatus($config['translation']);
+            $this->session->set_userdata(['set_lang' => $config['translation'], 'is_rtl' => $isRTL]);
+            
             set_alert('success', translate('the_configuration_has_been_updated'));
             redirect(current_url());
         }

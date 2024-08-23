@@ -57,7 +57,7 @@
 					<th><?php echo translate('purchase_qty'); ?></th>
 					<th><?php echo translate('total_issued'); ?></th>
 					<th><?php echo translate('total_sales'); ?></th>
-					<th><?php echo translate('current') . " " . translate('stock'); ?></th>
+					<th class="isExport"><?php echo translate('current') . " " . translate('stock'); ?></th>
 				</tr>
 			</thead>
 			<tbody>

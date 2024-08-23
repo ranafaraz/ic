@@ -68,7 +68,7 @@
 									<th><?=translate('total_present')?></th>
 									<th><?=translate('total_absent')?></th>
 									<th><?=translate('present')?> (%)</th>
-									<th><?=translate('absent')?> (%)</th>
+									<th class="isExport"><?=translate('absent')?> (%)</th>
 								</tr>
 							</thead>
 							<tbody>

@@ -93,10 +93,7 @@ endif;
 							<td><?php echo _d($row['created_at']);?></td>
 							<td class="min-w-c">
 								<!-- host link -->
-								<a href="javascript:void(0);" class="btn btn-circle btn-default icon" data-toggle="tooltip" data-original-title="<?=translate('host')?>" 
-								onclick="getHostModal('<?=$row['meeting_id'] . "|" . $row['id'] ?>');">
-									<i class="fas fa-network-wired"></i>
-								</a>
+								<button class="btn btn-circle btn-default icon" data-toggle="tooltip" data-original-title="<?=translate('host')?>" data-loading-text="<i class='fas fa-spinner fa-spin'></i>" onclick="getHostModal('<?=$row['meeting_id'] . "|" . $row['id'] ?>', this);"><i class="fas fa-network-wired"></i></button>
 							<?php  if (get_permission('live_class', 'is_delete')) { ?>
 								<!-- deletion link -->
 								<?php echo btn_delete('live_class/delete/'.$row['id']);?>
@@ -127,7 +124,7 @@ endif;
 								<?php
 									$arrayBranch = $this->app_lib->getSelectList('branch');
 									echo form_dropdown("branch_id", $arrayBranch, set_value('branch_id'), "class='form-control' data-width='100%' onchange='getClassByBranch(this.value)' id='branch_id'
-									data-plugin-selectTwo  data-minimum-results-for-search='Infinity'");
+									data-plugin-selectTwo ");
 								?>
 								<span class="error"></span>
 							</div>
@@ -148,7 +145,7 @@ endif;
 							<?php
 								$arrayClass = $this->app_lib->getClass($branch_id);
 								echo form_dropdown("class_id", $arrayClass, set_value('class_id'), "class='form-control' id='class_id' onchange='getSectionByClass(this.value,0,1)'
-								data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity' ");
+								data-plugin-selectTwo data-width='100%' ");
 							?>
 							<span class="error"></span>
 						</div>
@@ -425,23 +422,31 @@ endif;
 		        	}
 		        }
 		    });
-			
 		});
-
-
 	});
 
 	// get details
-	function getHostModal(id) {
+	function getHostModal(id, elem) {
+		var btn = $(elem);
 	    $.ajax({
 	        url: base_url + 'live_class/hostModal',
 	        type: 'POST',
 	        data: {'meeting_id': id},
 	        dataType: "html",
+            beforeSend: function () {
+                btn.button('loading');
+            },
 	        success: function (data) {
 	            $('#quick_view').html(data);
 	            mfp_modal('#modal');
-	        }
+	        },
+            error: function (xhr) {
+                btn.button('reset');
+            },
+            complete: function () {
+                btn.button('reset');
+                btn.tooltip('hide');
+            } 
 	    });
 	}
 

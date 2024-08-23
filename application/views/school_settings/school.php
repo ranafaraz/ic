@@ -250,7 +250,6 @@
                                         <span class="error"></span>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </section>
@@ -318,6 +317,28 @@
                                             '0' => translate('disabled'), 
                                         );
                                         echo form_dropdown("offline_payments", $offlinePayments, set_value('offline_payments', $school['offline_payments']), "class='form-control' id='offline_payments' 
+                                        data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity'");
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Fees offline payments setting -->
+                    <section class="panel pg-fw">
+                        <div class="panel-body">
+                            <h5 class="chart-title mb-xs"><?=translate('online_exam'); ?></h5>
+                            <div class="mt-lg">
+                                <div class="form-group mb-md">
+                                    <label class="col-md-3 control-label">Show Only Own Question</label>
+                                    <div class="col-md-6">
+                                        <?php
+                                        $offlinePayments = array(
+                                            '1' => translate('enabled'), 
+                                            '0' => translate('disabled'), 
+                                        );
+                                        echo form_dropdown("show_own_question", $offlinePayments, set_value('show_own_question', $school['show_own_question']), "class='form-control' 
                                         data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity'");
                                         ?>
                                     </div>

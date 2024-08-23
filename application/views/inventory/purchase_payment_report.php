@@ -51,7 +51,7 @@
 					<th><?php echo translate('paid_via'); ?></th>
 					<th><?php echo translate('date'); ?></th>
 					<th><?php echo translate('amount'); ?></th>
-					<th><?php echo translate('action'); ?></th>
+					<th class="isExport"><?php echo translate('action'); ?></th>
 				</tr>
 			</thead>
 			<tbody>

@@ -187,7 +187,7 @@ a:hover, a:focus {
     border-bottom: 70px solid transparent;
     content: '';
     height: 0;
-    left: -60px;
+    left: -59px;
     width: 0;
     position: absolute;
     pointer-events: none;

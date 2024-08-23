@@ -107,7 +107,7 @@
 	</script>
     <?php 
     $config = $this->application_model->whatsappChat();
-    if ($config['backend_enable_chat'] == 1) {
+    if (!empty($config) && $config['backend_enable_chat'] == 1) {
     ?>
     <div class="whatsapp-popup">
         <div class="whatsapp-button">

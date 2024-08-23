@@ -83,7 +83,7 @@ $currency_symbol = $global_config['currency_symbol'];
 								<th><?=translate('collect_by')?></th>
 								<th><?=translate('payment_via')?></th>
 								<th><?=translate('fees_type')?></th>
-								<th><?=translate('fine')?></th>
+								<th class="isExport"><?=translate('fine')?></th>
 							</tr>
 						</thead>
 						<tbody>

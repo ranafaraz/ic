@@ -84,7 +84,7 @@ $currency_symbol = $global_config['currency_symbol'];
 					<th><?php echo translate('date'); ?></th>
 					<th><?php echo translate('dr'); ?>.</th>
 					<th><?php echo translate('cr'); ?>.</th>
-					<th><?php echo translate('balance'); ?></th>
+					<th class="isExport"><?php echo translate('balance'); ?></th>
 				</tr>
 			</thead>
 			<tbody>

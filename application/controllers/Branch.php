@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 4.0
+ * @version : 6.5
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -106,6 +106,16 @@ class Branch extends Admin_Controller
         if (is_superadmin_loggedin()) {
             $this->db->where('id', $id);
             $this->db->delete('branch');
+
+            //delete branch all staff
+            $result = $this->db->select('id')->where('branch_id', $id)->get('staff')->result();
+            foreach ($result as $key => $value) {
+                $this->db->where('user_id', $value->id);
+                $this->db->delete('login_credential');
+
+                $this->db->where('id', $value->id);
+                $this->db->delete('staff');
+            }
         } else {
             redirect(base_url(), 'refresh');
         }

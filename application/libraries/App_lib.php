@@ -425,6 +425,17 @@ class App_lib
         return $months[$m];
     }
 
+    public function getMonthsDropdown($startMonth = '')
+    {
+        $array = array('' => translate('select'));
+        $startMonth = (empty($startMonth)) ? 01 : $startMonth;
+        for ($i = $startMonth; $i < $startMonth + 12; $i++) {
+            $month = date('m', mktime(0, 0, 0, $i, 10));
+            $array[$month] = translate(strtolower(date('F', mktime(0, 0, 0, $i, 10))));
+        }
+        return $array;
+    }
+
     public function getDateformat()
     {
         $date = array(
@@ -539,5 +550,27 @@ class App_lib
                 return true;
             }
         }
+    }
+
+    function getAttendanceType()
+    {
+        $ci = &get_instance();
+        $role_id = $ci->session->userdata('loggedin_role_id');
+        $branchID = $ci->session->userdata('loggedin_branch');
+        if ($role_id == 1) {
+            return 2;
+        }
+        $sql = "SELECT `attendance_type` FROM `branch` WHERE `id` = " . $ci->db->escape($branchID);
+        $result = $ci->db->query($sql)->row();
+        return $result->attendance_type;
+    }
+
+    function getSchoolConfig($branchID = '', $select = '*')
+    {
+        $ci = &get_instance();
+        $branch_id = empty($branchID) ? $ci->session->userdata('loggedin_branch') : $branchID;
+        $sql = "SELECT $select FROM branch WHERE id = " . $ci->db->escape($branch_id);
+        $result = $ci->db->query($sql)->row();
+        return $result;
     }
 }

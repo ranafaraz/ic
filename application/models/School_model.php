@@ -51,6 +51,7 @@ class School_model extends MY_Model
             'unique_roll' => $data['unique_roll'],
             'currency_formats' => $data['currency_formats'],
             'symbol_position' => $data['symbol_position'],
+            'show_own_question' => $data['show_own_question'],
         );
         $this->db->where('id', $data['brance_id']);
         $this->db->update('branch', $arrayBranch);

@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 6.8
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -541,7 +541,7 @@ class Student extends Admin_Controller
         }
         $this->load->model('fees_model');
         $this->load->model('exam_model');
-        $getStudent = $this->student_model->getSingleStudent($id);
+        $getStudent = $this->student_model->getSingleStudent($id, true);
         if (isset($_POST['update'])) {
             $this->session->set_flashdata('profile_tab', 1);
             $this->data['branch_id'] = $this->application_model->get_branch_id();
@@ -844,7 +844,8 @@ class Student extends Admin_Controller
         $classID = $this->input->post('class_id');
         $sectionID = $this->input->post('section_id');
         if ($this->uri->segment(3)) {
-            $this->db->where_not_in('student_id', $this->uri->segment(3));
+            $studentID = $this->db->select('student_id')->where('id', $this->uri->segment(3))->get('enroll')->row()->student_id;
+            $this->db->where_not_in('student_id', $studentID);
         }
         if ($unique_roll == 2) {
             $this->db->where('section_id', $sectionID);
@@ -864,7 +865,8 @@ class Student extends Admin_Controller
     {
         $branchID = $this->application_model->get_branch_id();
         if ($this->uri->segment(3)) {
-            $this->db->where_not_in('id', $this->uri->segment(3));
+            $studentID = $this->db->select('student_id')->where('id', $this->uri->segment(3))->get('enroll')->row()->student_id;
+            $this->db->where_not_in('id', $studentID);
         }
         $this->db->where('register_no', $register);
         $query = $this->db->get('student')->num_rows();
@@ -1101,7 +1103,6 @@ class Student extends Admin_Controller
         $this->load->view('layout/index', $this->data);
     }
 
-
     // add new student deactivate reason
     public function disable_reason()
     {
@@ -1182,6 +1183,33 @@ class Student extends Admin_Controller
             $result = $query->row_array();
             echo json_encode($result);
         }
+    }
+
+    public function sibling_report()
+    {
+        // check access permission
+        if (!get_permission('student', 'is_view')) {
+            access_denied();
+        }
+        $branchID = $this->application_model->get_branch_id();
+        if (isset($_POST['search'])) {
+            $classID = $this->input->post('class_id');
+            $sectionID = $this->input->post('section_id');
+            $getParentsList = $this->student_model->getParentList($classID, $sectionID, $branchID);
+            $list = array();
+            foreach ($getParentsList as $key => $parent) {
+                if (intval($parent['child']) > 1) {
+                    $getParentsList[$key]['student'] = $this->student_model->getSiblingListByClass($parent['parent_id'], $classID, $sectionID);
+                    $list[] = $getParentsList[$key];
+                }
+            }
+            $this->data['students'] = $list;
+        }
+        $this->data['branch_id'] = $branchID;
+        $this->data['title'] = translate('sibling_report');
+        $this->data['main_menu'] = 'student_repots';
+        $this->data['sub_page'] = 'student/sibling_report';
+        $this->load->view('layout/index', $this->data);
     }
 
 }

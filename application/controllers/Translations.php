@@ -218,10 +218,11 @@ class Translations extends Admin_Controller
             $this->db->where('id', $id);
             $this->db->update('language_list', $array_data);
 
-            $isRTL = $this->db->select('rtl')->where('id', $id)->get('language_list')->row()->rtl;;
-            $this->session->set_userdata('is_rtl', $isRTL);
-
-
+            $isRTL = $this->db->select('rtl,lang_field')->where('id', $id)->get('language_list')->row();
+            $lan = $this->session->userdata('set_lang');
+            if ($lan == $isRTL->lang_field) {
+                $this->session->set_userdata('is_rtl', $isRTL->rtl);
+            }
             echo $message;
         }
     }

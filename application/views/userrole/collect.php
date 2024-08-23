@@ -1,6 +1,6 @@
 <?php
 $currency_symbol = $global_config['currency_symbol'];
-$allocations = $this->fees_model->getInvoiceDetails($basic['id']);
+$allocations = $this->fees_model->getInvoiceDetails($basic['enroll_id']);
 $extINTL = extension_loaded('intl');
 if ($extINTL == true) {
 	$spellout = new NumberFormatter("en", NumberFormatter::SPELLOUT);
@@ -365,7 +365,7 @@ if (count($allocations)) {
 												if ($extINTL == true) {
 													$numberSPELL = ' </br>( ' . ucwords($spellout->format(($total_paid + $total_fine))) . ' )';
 												}
-												echo $currencyFormat($total_paid + $total_fine) . $numberSPELL;
+												echo currencyFormat($total_paid + $total_fine) . $numberSPELL;
 												?>
 											</li>
 											<?php endif; ?>

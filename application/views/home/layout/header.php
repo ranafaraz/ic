@@ -13,18 +13,17 @@
 							<i class="far fa-envelope"></i> <?php echo $cms_setting['email']; ?>
 						</a></li>
 						<li class="list-inline-item"><i class="fas fa-phone-volume"></i> <?php echo $cms_setting['mobile_no']; ?></li>
-					<?php if (!is_loggedin()) { 
-
-					        $authenticationURL = base_url($cms_setting['url_alias'] . '/authentication');
-					        $saasExisting = $this->app_lib->isExistingAddon('saas');
-					        if ($saasExisting && $this->db->table_exists("custom_domain")) {
-					            $getDomain = $this->home_model->getCurrentDomain();
-					            if(!empty($getDomain)) {
-					                $authenticationURL = base_url('authentication');
-					            }
-					        }
-
-						?>
+					<?php 
+					$homeURL = base_url($cms_setting['url_alias']);
+					if (!is_loggedin()) { 
+				        $authenticationURL = base_url($cms_setting['url_alias'] . '/authentication');
+				        $saasExisting = $this->app_lib->isExistingAddon('saas');
+				        if ($saasExisting && $this->db->table_exists("custom_domain")) {
+				            $getDomain = $this->home_model->getCurrentDomain();
+				            if(!empty($getDomain)) {
+				                $authenticationURL = base_url('authentication');
+				            }
+				        } ?>
 						<li class="list-inline-item"><a href="<?php echo $authenticationURL; ?>"><i class="fas fa-user-lock"></i> Login</a></li>
 					<?php } else { ?>
 						<li class="list-inline-item"><a href="<?php echo base_url('dashboard'); ?>"><i class="fas fa-home"></i> Dashboard</a></li>
@@ -41,7 +40,7 @@
 			<nav id="nav" class="navbar navbar-expand-lg" role="navigation">
 				<div class="container-md px-md-0">
 				<!-- Logo Starts -->
-					<a href="#" class="navbar-brand">
+					<a href="<?php echo $homeURL ?>" class="navbar-brand">
 						<img src="<?php echo base_url('uploads/frontend/images/' . $cms_setting['logo']); ?>" alt="Logo">
 					</a>
 					<!-- Logo Ends -->
@@ -115,4 +114,29 @@
 	</div>
 	<!-- Navbar Ends -->
 </header>
-<!-- Header Ends -->
+
+<?php
+$news_list = $this->home_model->getLatestNews($branchID);
+if (!empty($news_list)) {
+	$url_alias = $cms_setting['url_alias'];
+	?>
+<div class="latest--news">
+    <div class="container">
+        <div class="d-lg-flex align-items-center">
+            <div class="latest-title d-flex align-items-center text-nowrap text-white text-uppercase">
+                <i class="fa-solid fa-bolt"></i> Latest News
+            </div>
+			<div class="news-updates-list overflow-hidden mt-2 mb-2" data-marquee="true">
+				<ul class="nav">
+				<?php foreach ($news_list as $key => $value) { ?>
+					<li><a class="text-white" href="<?php echo base_url($url_alias . '/news_view/' . $value->alias); ?>"><strong><?php echo str_pad($key + 1, 2, '0', STR_PAD_LEFT); ?>.</strong> <?php echo $value->title . " - <span class='date-text'>" .  _d($value->date); ?></span></a></li>
+				<?php } ?>
+				</ul>
+			</div>
+			<div class="current-date text-nowrap text-white">
+				<span class="date-now"><i class="fa-regular fa-clock"></i> <?php echo _d(date('Y-m-d')) ?></span>
+			</div>
+        </div>
+    </div>
+</div>
+<?php } ?>

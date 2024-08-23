@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 6.5
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -314,7 +314,7 @@ class Inventory extends Admin_Controller
                 redirect(base_url('inventory/unit'));
             }
         }
-        $this->data['unitlist'] = $this->inventory_model->get('product_unit');
+        $this->data['unitlist'] = $this->inventory_model->get('product_unit', '', false, true);
         $this->data['title'] = translate('inventory');
         $this->data['sub_page'] = 'inventory/unit';
         $this->data['main_menu'] = 'inventory';

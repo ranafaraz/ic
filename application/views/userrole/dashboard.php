@@ -1,12 +1,14 @@
 <?php if (empty($student_id)): ?>
 	<div class="row">
 		<?php
-		$this->db->select('s.id,s.first_name,s.last_name,s.photo,s.register_no,s.birthday,e.class_id,e.section_id,e.roll,e.session_id,c.name as class_name,se.name as section_name');
+		$sessionID = get_session_id();
+		$this->db->select('s.id,s.first_name,s.last_name,s.photo,s.register_no,s.birthday,e.class_id,e.section_id,e.id as enroll_id,e.roll,e.session_id,c.name as class_name,se.name as section_name');
 		$this->db->from('enroll as e');
 		$this->db->join('student as s', 'e.student_id = s.id', 'left');
 		$this->db->join('class as c', 'e.class_id = c.id', 'left');
 		$this->db->join('section as se', 'e.section_id = se.id', 'left');
 		$this->db->where('s.parent_id', get_loggedin_user_id());
+		$this->db->where('e.session_id', $sessionID);
 		$query = $this->db->get();
 		if ($query->num_rows() > 0) {
 			$students = $query->result();
@@ -32,11 +34,11 @@
 					</ul>
 				</div>
 				<div class="col-md-12 col-lg-3 col-xl-4">
-					<a href="<?=base_url('parents/select_child/' . $row->id);?>" class="chil-shaw btn btn-primary btn-circle pull-right"><i class="fas fa-tachometer-alt"></i> <?=translate('dashboard')?></a>
+					<a href="<?=base_url('parents/select_child/' . $row->enroll_id);?>" class="chil-shaw btn btn-primary btn-circle pull-right"><i class="fas fa-tachometer-alt"></i> <?=translate('dashboard')?></a>
 				</div>
 			</div>
 		</div>
-		<?php endforeach; } else {?>
+		<?php endforeach; } else { ?>
 			<div class="alert alert-subl text-center">
 				<strong><i class="fas fa-exclamation-triangle"></i> <?=translate('no_child_was_found')?></strong>
 			</div>
@@ -130,7 +132,7 @@ else :
 									<?php
 										$this->db->from('event');
 										$this->db->where('start_date BETWEEN DATE_SUB(CURDATE() ,INTERVAL 1 MONTH) AND CURDATE() AND branch_id = "'. get_loggedin_branch_id() .'"');
-								    	echo $this->db->get()->num_rows();
+								    	echo $this->db->get()->num_rows();				
 									?>
 								</h3>
 							</div>
@@ -183,9 +185,9 @@ else :
 		</header>
 		<div class="panel-body">
 			<div id="printResult pt-sm pb-sm">
-				<div class="table-responsive">
+				<div class="table-responsive">						
 					<table class="table table-bordered table-condensed text-dark mb-sm tbr-top" id="ev_table">
-
+						
 					</table>
 				</div>
 			</div>

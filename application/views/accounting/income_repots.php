@@ -61,7 +61,7 @@ $currency_symbol = $global_config['currency_symbol'];
 					<th><?php echo translate('description'); ?></th>
 					<th><?php echo translate('pay_via'); ?></th>
 					<th><?php echo translate('date'); ?></th>
-					<th><?php echo translate('amount') . ' (Cr.)'?></th>
+					<th class="isExport"><?php echo translate('amount') . ' (Cr.)'?></th>
 				</tr>
 			</thead>
 			<tbody>

@@ -231,7 +231,7 @@ function initDatatable(selector,url, params={}, pageLength=20, aoColumnDefs=[{"o
                 titleAttr: 'Copy',
                 title: $('.export_title').html(),
                 exportOptions: {
-                    columns: ':visible'
+                    columns: [':not(:last-child, th.no-export)','th.isExport']
                 }
             },
             {
@@ -240,7 +240,7 @@ function initDatatable(selector,url, params={}, pageLength=20, aoColumnDefs=[{"o
                 titleAttr: 'Excel',
                 title: $('.export_title').html(),
                 exportOptions: {
-                    columns: ':visible'
+                    columns: [':not(:last-child, th.no-export)','th.isExport']
                 }
             },
             {
@@ -249,7 +249,7 @@ function initDatatable(selector,url, params={}, pageLength=20, aoColumnDefs=[{"o
                 titleAttr: 'CSV',
                 title: $('.export_title').html(),
                 exportOptions: {
-                    columns: ':visible'
+                    columns: [':not(:last-child, th.no-export)','th.isExport']
                 }
             },
             {
@@ -264,7 +264,7 @@ function initDatatable(selector,url, params={}, pageLength=20, aoColumnDefs=[{"o
                     win.styles.tableHeader.alignment = 'left';
                 },
                 exportOptions: {
-                    columns: ':visible'
+                    columns: [':not(:last-child, th.no-export)','th.isExport']
                 }
             },
             {
@@ -285,7 +285,7 @@ function initDatatable(selector,url, params={}, pageLength=20, aoColumnDefs=[{"o
                 },
                 footer: true,
                 exportOptions: {
-                    columns: ':visible'
+                    columns: [':not(:last-child, th.no-export)','th.isExport']
                 }
             },
             {
@@ -459,17 +459,27 @@ function getClassByBranch(branch_id) {
 }
 
 // get patient category details
-function getStudentCategory(id) {
+function getStudentCategory(id, elem) {
+    var btn = $(elem);
     $.ajax({
         url: base_url + 'student/categoryDetails',
         type: 'POST',
         data: {'id': id},
         dataType: "json",
+        beforeSend: function () {
+            btn.button('loading');
+        },
         success: function (data) {
             $('#ecategory_id').val(data.id);
             $('#ecategory_name').val(data.name);
             $('#ebranch_id').val(data.branch_id).trigger('change');
             mfp_modal('#modal');
+        },
+        error: function (xhr) {
+            btn.button('reset');
+        },
+        complete: function () {
+            btn.button('reset');
         }
     });
 }
@@ -713,26 +723,22 @@ function fn_printElem(elem, html = false)
     } else {
        var oContent = elem; 
     }
-    var frame1 = document.createElement('iframe');
-    frame1.name = "frame1";
-    frame1.style.position = "absolute";
-    frame1.style.top = "-1000000px";
-    document.body.appendChild(frame1);
-    var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1.contentDocument.document : frame1.contentDocument;
+    var frameDoc=window.open('', 'document-print');
     frameDoc.document.open();
     //create a new HTML document.
     frameDoc.document.write('<html><head><title></title>');
     frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/vendor/bootstrap/css/bootstrap.min.css">');
+    if (isRTLenabled == '1') {
+        frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/bootstrap.rtl.min.css">');
+    }
     frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/custom-style.css">');
     frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/ramom.css">');
-    frameDoc.document.write('</head><body>');
+    frameDoc.document.write('</head><body onload="window.print()">');
     frameDoc.document.write(oContent);
     frameDoc.document.write('</body></html>');
     frameDoc.document.close();
     setTimeout(function () {
-        window.frames["frame1"].focus();
-        window.frames["frame1"].print();
-        frame1.remove();
-    }, 500);
+        frameDoc.close();      
+    }, 5000);
     return true;
 }

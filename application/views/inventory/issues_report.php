@@ -60,7 +60,7 @@
 					<th><?php echo translate('due_date'); ?></th>
 					<th><?php echo translate('return_date'); ?></th>
 					<th><?php echo translate('quantity'); ?></th>
-					<th><?php echo translate('status'); ?></th>
+					<th class="isExport"><?php echo translate('status'); ?></th>
 				</tr>
 			</thead>
 			<tbody>

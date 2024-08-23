@@ -54,6 +54,7 @@ $route['(:any)/authentication'] = 'authentication/index/$1';
 $route['(:any)/forgot'] = 'authentication/forgot/$1';
 $route['(:any)/teachers'] = 'home/teachers';
 $route['(:any)/events'] = 'home/events';
+$route['(:any)/news'] = 'home/news/';
 $route['(:any)/about'] = 'home/about';
 $route['(:any)/faq'] = 'home/faq';
 $route['(:any)/admission'] = 'home/admission';
@@ -65,6 +66,7 @@ $route['(:any)/certificates'] = 'home/certificates';
 $route['(:any)/page/(:any)'] = 'home/page/$2';
 $route['(:any)/gallery_view/(:any)'] = 'home/gallery_view/$2';
 $route['(:any)/event_view/(:num)'] = 'home/event_view/$2';
+$route['(:any)/news_view/(:any)'] = 'home/news_view/$2';
 
 $route['dashboard'] = 'dashboard/index';
 $route['branch'] = 'branch/index';
@@ -100,5 +102,6 @@ $route['authentication'] = 'authentication/index';
 $route['install'] = 'install/index';
 $route['404_override'] = 'errors';
 $route['default_controller'] = 'home';
+
 $route['(:any)'] = 'home/index/$1';
 $route['translate_uri_dashes'] = FALSE;

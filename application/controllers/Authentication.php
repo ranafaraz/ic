@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 5.8
+ * @version : 6.5
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -17,6 +17,7 @@ class Authentication extends Authentication_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->library('user_agent');
     }
 
     /* email is okey lets check the password now */
@@ -66,7 +67,23 @@ class Authentication extends Authentication_Controller
                         // login user type
                         if ($login_credential->role == 6) {
                             $userType = 'parent';
+                            // check parent login status
+                            $getParentLoginStatus = $this->authentication_model->getParentLoginStatus($getUser['branch_id']);
+                            if ($getParentLoginStatus == 0) {
+                                set_alert('error', translate('parent_login_has_been_disabled'));
+                                redirect(base_url('authentication'));
+                                exit();
+                            }
                         } elseif($login_credential->role == 7) {
+                            // check student login status
+                            $getStudentLoginStatus = $this->authentication_model->getStudentLoginStatus($getUser['branch_id']);
+                            if ($getStudentLoginStatus == 0) {
+                                set_alert('error', translate('student_login_has_been_disabled'));
+                                redirect(base_url('authentication'));
+                                exit();
+                            }
+                            $getEnrollID = $this->application_model->getEnrollID($getUser['id'], $getConfig->session_id);
+                            $this->session->set_userdata('enrollID', $getEnrollID);
                             $userType = 'student';
                         } else {
                             $userType = 'staff';
@@ -88,6 +105,8 @@ class Authentication extends Authentication_Controller
                         );
                         $this->session->set_userdata($sessionData);
                         $this->db->update('login_credential', array('last_login' => date('Y-m-d H:i:s')), array('id' => $login_credential->id));
+                        // login Log details save in DB here
+                        $this->loginLog($login_credential->user_id, $login_credential->role, $getUser['branch_id']);
                         // is logged in
                         if ($this->session->has_userdata('redirect_url')) {
                             redirect($this->session->userdata('redirect_url'));
@@ -217,5 +236,29 @@ class Authentication extends Authentication_Controller
         $this->session->unset_userdata('loggedin');
         $this->session->sess_destroy();
         redirect($webURL, 'refresh');
+    }
+
+    private function loginLog($userID = 0, $role = 0, $branchID = '')
+    {
+        if ($this->agent->is_browser()) {
+            $browser = $this->agent->browser() . ' ' . $this->agent->version();
+        } elseif ($this->agent->is_robot()) {
+            $browser = $this->agent->robot();
+        } elseif ($this->agent->is_mobile()) {
+            $browser = $this->agent->mobile();
+        } else {
+            $browser = 'Unknown';
+        }
+        $ip_address = $this->input->ip_address();
+        $data = array(
+            'user_id' => $userID,
+            'role' => $role,
+            'ip' =>  ($ip_address == "::1" ? "127.0.0.1" : $ip_address),
+            'platform' => $this->agent->platform(),
+            'browser' => $browser,
+            'timestamp'   => date('Y-m-d H:i:s'),
+            'branch_id'   => $branchID,
+        );
+        $this->db->insert('login_log', $data);
     }
 }

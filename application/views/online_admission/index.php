@@ -52,6 +52,7 @@
 					<thead>
 						<tr>
 							<th width="80"><?=translate('sl')?></th>
+							<th><?=translate('reference_no')?></th>
 							<th><?=translate('name')?></th>
 							<th><?=translate('gender')?></th>
 							<th><?=translate('class')?></th>
@@ -76,6 +77,7 @@
 							?>
 						<tr>
 							<td><?php echo $count++;  ?></td>
+							<td><?php echo $row['reference_no'];?></td>
 							<td><?php echo $row['first_name'] . " " . $row['last_name'];?></td>
 							<td><?php echo ucfirst($row['gender']);?></td>
 							<td><?php echo $row['class_name'];?></td>
@@ -84,7 +86,7 @@
 						if (count($show_custom_fields)) {
 							foreach ($show_custom_fields as $fields) {
 						?>
-							<td><?php echo get_table_custom_field_value($fields['id'], $row['id']);?></td>
+							<td><?php echo get_online_custom_table_custom_field_value($fields['id'], $row['id']);?></td>
 						<?php } } ?>
 							<td>
 								<?php
@@ -110,8 +112,12 @@
 							</td>
 							<td><?php echo _d($row['apply_date']) . " <br> " . date("h:m A", strtotime($row['apply_date']));?></td>
 							<td class="action">
+								<a target="_blank" href="<?php echo base_url('home/admission_confirmation/' . $row['reference_no']);?>" class="btn btn-default btn-circle icon" data-toggle="tooltip"
+								data-original-title="<?=translate('print')?>">
+									<i class="fas fa-print"></i>
+								</a>
 							<?php if ($row['status']  != 2 && get_permission('online_admission', 'is_add')) { ?>
-								<?php if (!empty($row['doc'])) {  ?>
+								<?php if (!empty($row['doc'])) { ?>
 								<a href="<?php echo base_url('online_admission/download/' . $row['doc']);?>" class="btn btn-default btn-circle icon" data-toggle="tooltip"
 								data-original-title="<?=translate('download')?>">
 									<i class="fas fa-file-download"></i>

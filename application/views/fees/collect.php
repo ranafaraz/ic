@@ -1,5 +1,4 @@
 <?php
-
 $currency_symbol = $global_config['currency_symbol'];
 $extINTL = extension_loaded('intl');
 if ($extINTL == true) {
@@ -135,7 +134,7 @@ if ($extINTL == true) {
 										$total_balance = 0;
 										$total_amount = 0;
 										$typeData = array('' => translate('select'));
-										$allocations = $this->fees_model->getInvoiceDetails($basic['id']);
+										$allocations = $this->fees_model->getInvoiceDetails($basic['enroll_id']);
 										foreach ($allocations as $row) {
 											$deposit = $this->fees_model->getStudentFeeDeposit($row['allocation_id'], $row['fee_type_id']);
 											$type_discount = $deposit['total_discount'];
@@ -217,14 +216,14 @@ if ($extINTL == true) {
 											?>
 										</li>
 										<?php else: 
-											$paidWithFine = currencyFormat(($total_paid + $total_fine));
+											$paidWithFine = ($total_paid + $total_fine);
 											?>
 										<li>
 											<strong><?=translate('total_paid')?> (<?=translate('with_fine')?>) : </strong> 
 											<?php
 											$numberSPELL = "";
 											if ($extINTL == true) {
-												$numberSPELL = ' </br>( ' . ucwords($spellout->format($paidWithFine)) . ' )';
+												$numberSPELL = ' </br>( ' . ucwords($spellout->format(number_format($paidWithFine, 2, '.', ''))) . ' )';
 											}
 											echo currencyFormat($paidWithFine) . $numberSPELL;
 											?>
@@ -342,7 +341,7 @@ if ($extINTL == true) {
 								</thead>
 								<tbody>
 									<?php
-									$allocations = $this->db->where(array('student_id' => $basic['id'], 'session_id' => get_session_id()))->get('fee_allocation')->result_array();
+									$allocations = $this->db->where(array('student_id' => $basic['enroll_id'], 'session_id' => get_session_id()))->get('fee_allocation')->result_array();
 									foreach ($allocations as $allRow) {
 										$historys = $this->fees_model->getPaymentHistory($allRow['id'], $allRow['group_id']);
 										foreach ($historys as $row) {
@@ -565,7 +564,7 @@ if ($extINTL == true) {
 								</div>
 							</div>
 						</div>
-						<input type="hidden" name="invoice_id" value="<?php echo $basic['id']; ?>">
+						<input type="hidden" name="invoice_id" value="<?php echo $basic['enroll_id']; ?>">
 						<input type="hidden" name="branch_id" value="<?=$basic['branch_id']?>">
 						<input type="hidden" name="student_id" value="<?=$basic['id']?>">
 						<footer class="panel-footer">
@@ -616,7 +615,7 @@ if ($extINTL == true) {
 
 <script type="text/javascript">
 	var branchID = "<?php echo $basic['branch_id']; ?>";
-	var studentID = "<?php echo $basic['id']; ?>";
+	var studentID = "<?php echo $basic['enroll_id']; ?>";
 	$(".fee-selectAll").on("change", function(ev)
 	{
 		var $chcks = $(this).parents("table").find("tbody input[type='checkbox']");
@@ -655,7 +654,6 @@ if ($extINTL == true) {
                 	'student_id' : studentID,
                 },
                 dataType: "html",
-                async: false,
                 cache: false,
                 success: function (response) {
                     $("#feeCollect").html(response);
@@ -699,7 +697,7 @@ if ($extINTL == true) {
         	}
 		});
         if (arrayData.length === 0) {
-            alert("No Rows Selected.");
+            popupMsg("<?php echo translate('no_row_are_selected') ?>", "error");
             $btn.button('reset');
         } else {
         	$("#invDetailsPrint").html("");
@@ -736,7 +734,7 @@ if ($extINTL == true) {
         	}
 		});
         if (arrayData.length === 0) {
-            alert("No Rows Selected.");
+            popupMsg("<?php echo translate('no_row_are_selected') ?>", "error");
             $btn.button('reset');
         } else {
         	$("#invPaymentHistory").html("");
@@ -788,7 +786,6 @@ if ($extINTL == true) {
                 dataType: "html",
                 cache: false,
                 success: function (response) {
-                  
                     fn_printElem(response, true);
                 },
                 complete: function () {
@@ -797,9 +794,6 @@ if ($extINTL == true) {
             });
         }
 	});
-
-
-
 
     $('#selected_revert').on('click', function(e){
     	var $this = $(this);

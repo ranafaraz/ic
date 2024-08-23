@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 6.8
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -13,6 +13,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Attendance extends Admin_Controller
 {
+    protected $getAttendanceType;
     public function __construct()
     {
         parent::__construct();
@@ -22,6 +23,7 @@ class Attendance extends Admin_Controller
         if (!moduleIsEnabled('attendance')) {
             access_denied();
         }
+        $this->getAttendanceType = $this->app_lib->getAttendanceType();
     }
 
     public function index()
@@ -37,6 +39,10 @@ class Attendance extends Admin_Controller
     public function student_entry()
     {
         if (!get_permission('student_attendance', 'is_add')) {
+            access_denied();
+        }
+
+        if ($this->getAttendanceType != 2 && $this->getAttendanceType != 0) {
             access_denied();
         }
 
@@ -93,7 +99,6 @@ class Attendance extends Admin_Controller
         $this->load->view('layout/index', $this->data);
     }
 
-    
     public function getWeekendsHolidays()
     {
         if (!get_permission('student_attendance', 'is_add')) {
@@ -103,7 +108,7 @@ class Attendance extends Admin_Controller
             $branchID = $this->input->post('branch_id');
             $getWeekends = $this->application_model->getWeekends($branchID);
             $getHolidays = $this->attendance_model->getHolidays($branchID);
-            echo json_encode(['getWeekends' => $getWeekends, 'getHolidays' => '["' . $getHolidays . '"]' ]);
+            echo json_encode(['getWeekends' => $getWeekends, 'getHolidays' => '["' . $getHolidays . '"]']);
         }
     }
 
@@ -234,13 +239,17 @@ class Attendance extends Admin_Controller
             access_denied();
         }
 
+        if ($this->getAttendanceType != 2 && $this->getAttendanceType != 0) {
+            access_denied();
+        }
+
         $branchID = $this->application_model->get_branch_id();
         if ($_POST) {
             $this->data['class_id'] = $this->input->post('class_id');
             $this->data['section_id'] = $this->input->post('section_id');
             $this->data['month'] = date('m', strtotime($this->input->post('timestamp')));
             $this->data['year'] = date('Y', strtotime($this->input->post('timestamp')));
-            $this->data['days'] = cal_days_in_month(CAL_GREGORIAN, $this->data['month'], $this->data['year']);
+            $this->data['days'] = date('t', strtotime($this->data['year'] . "-" . $this->data['month']));
             $this->data['studentlist'] = $this->attendance_model->getStudentList($branchID, $this->data['class_id'], $this->data['section_id']);
         }
         $this->data['branch_id'] = $branchID;
@@ -253,6 +262,10 @@ class Attendance extends Admin_Controller
     public function student_classreport()
     {
         if (!get_permission('student_attendance_report', 'is_view')) {
+            access_denied();
+        }
+
+        if ($this->getAttendanceType != 2 && $this->getAttendanceType != 0) {
             access_denied();
         }
 
@@ -274,6 +287,55 @@ class Attendance extends Admin_Controller
         $this->load->view('layout/index', $this->data);
     }
 
+    public function studentwise_overview()
+    {
+        if (!get_permission('student_attendance_report', 'is_view')) {
+            access_denied();
+        }
+
+        if ($this->getAttendanceType != 2 && $this->getAttendanceType != 0) {
+            access_denied();
+        }
+
+        $branchID = $this->application_model->get_branch_id();
+        if ($_POST) {
+
+            if (is_superadmin_loggedin()) {
+                $this->form_validation->set_rules('branch_id', translate('branch'), 'required');
+            }
+            $this->form_validation->set_rules('attendance_type', translate('attendance_type'), 'required');
+            $this->form_validation->set_rules('class_id', translate('class'), 'required');
+            $this->form_validation->set_rules('section_id', translate('section'), 'required');
+            $this->form_validation->set_rules('daterange', translate('date'), 'required');
+
+            if ($this->form_validation->run() == true) {
+                $daterange = explode(' - ', $this->input->post('daterange'));
+                $start = date("Y-m-d", strtotime($daterange[0]));
+                $end = date("Y-m-d", strtotime($daterange[1]));
+
+                $this->data['class_id'] = $this->input->post('class_id');
+                $this->data['section_id'] = $this->input->post('section_id');
+                $this->data['start'] = $start;
+                $this->data['end'] = $end;
+                $this->data['studentlist'] = $this->application_model->getStudentListByClassSection($this->data['class_id'], $this->data['section_id'], $branchID);
+            }
+        }
+        $this->data['headerelements'] = array(
+            'css' => array(
+                'vendor/daterangepicker/daterangepicker.css',
+            ),
+            'js' => array(
+                'vendor/moment/moment.js',
+                'vendor/daterangepicker/daterangepicker.js',
+            ),
+        );
+        $this->data['branch_id'] = $branchID;
+        $this->data['title'] = translate('student_attendance');
+        $this->data['sub_page'] = 'attendance/studentwise_overview';
+        $this->data['main_menu'] = 'attendance_report';
+        $this->load->view('layout/index', $this->data);
+    }
+
     /* employees attendance reports are produced here */
     public function employeewise_report()
     {
@@ -286,7 +348,7 @@ class Attendance extends Admin_Controller
             $this->data['role_id'] = $this->input->post('staff_role');
             $this->data['month'] = date('m', strtotime($this->input->post('timestamp')));
             $this->data['year'] = date('Y', strtotime($this->input->post('timestamp')));
-            $this->data['days'] = cal_days_in_month(CAL_GREGORIAN, $this->data['month'], $this->data['year']);
+            $this->data['days'] = date('t', strtotime($this->data['year'] . "-" . $this->data['month']));
             $this->data['stafflist'] = $this->attendance_model->getStaffList($this->data['branch_id'], $this->data['role_id']);
         }
         $this->data['title'] = translate('employee_attendance');
@@ -330,32 +392,34 @@ class Attendance extends Admin_Controller
         }
     }
 
-    public function check_holiday($date) {
+    public function check_holiday($date)
+    {
         $branchID = $this->application_model->get_branch_id();
         $getHolidays = $this->attendance_model->getHolidays($branchID);
         $getHolidaysArray = explode('","', $getHolidays);
 
-        if(!empty($getHolidaysArray)) {
-            if(in_array($date, $getHolidaysArray)) {
-                $this->form_validation->set_message('check_holiday','You have selected a holiday.');
-                return FALSE;
+        if (!empty($getHolidaysArray)) {
+            if (in_array($date, $getHolidaysArray)) {
+                $this->form_validation->set_message('check_holiday', 'You have selected a holiday.');
+                return false;
             } else {
-                return TRUE;
+                return true;
             }
         }
     }
 
-    public function check_weekendday($date) {
+    public function check_weekendday($date)
+    {
         $branchID = $this->application_model->get_branch_id();
         $getWeekendDays = $this->attendance_model->getWeekendDaysSession($branchID);
-        if(!empty($getWeekendDays)) {
-            if(in_array($date, $getWeekendDays)) {
+        if (!empty($getWeekendDays)) {
+            if (in_array($date, $getWeekendDays)) {
                 $this->form_validation->set_message('check_weekendday', "You have selected a weekend date.");
-                return FALSE;
+                return false;
             } else {
-                return TRUE;
+                return true;
             }
         }
-        return TRUE;
+        return true;
     }
 }

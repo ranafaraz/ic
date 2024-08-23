@@ -136,7 +136,8 @@ class Profile extends Admin_Controller
                 echo json_encode($array);
                 exit();
             }
-            $this->data['student'] = $this->student_model->getSingleStudent($userID);
+   
+            $this->data['student'] = $this->student_model->getSingleStudent($this->session->userdata('enrollID'), true);
             $this->data['sub_page'] = 'profile/student';
         } else {
             if ($_POST) {

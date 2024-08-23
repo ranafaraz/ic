@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.2
+ * @version : 6.8
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -109,118 +109,127 @@ class Addons extends MY_Controller
 
             $purchaseCode = $this->input->post('purchase_code');
             $uploadPath = "uploads/addons/";
-            $zipped_fileName = $_FILES['zip_file']['name'];
-            move_uploaded_file($_FILES['zip_file']['tmp_name'], $uploadPath . $zipped_fileName);
-            $random_dir = generate_encryption_key();
-            $this->extractPath = FCPATH . "{$uploadPath}{$random_dir}";
+            $config = array();
+            $config['upload_path'] = './uploads/addons/';
+            $config['allowed_types'] = 'zip';
+            $config['overwrite'] = TRUE;
+            $config['encrypt_name'] = FALSE;
+            $this->upload->initialize($config);
+            if ($this->upload->do_upload("zip_file")) {
+                $zipped_fileName = $this->upload->data('file_name');
+                $random_dir = generate_encryption_key();
+                $this->extractPath = FCPATH . "{$uploadPath}{$random_dir}";
 
-            // unzip uploaded update file and remove zip file.
-            $zip = new ZipArchive;
-            $res = $zip->open($uploadPath . $zipped_fileName);
-            if ($res === true) {
-                $fileName = trim($zip->getNameIndex(0), '/');
-                $res = $zip->extractTo($uploadPath . $random_dir);
-                $zip->close();
-                unlink($uploadPath . $zipped_fileName);
-                $configPath = "{$uploadPath}{$random_dir}/{$fileName}/config.json";
-                if (file_exists($configPath)) {
-                    $config = file_get_contents($configPath);
-                    if (!empty($config)) {
-                        $json = json_decode($config);
-                        if (!empty($json->name) && !empty($json->version) && !empty($json->unique_prefix) && !empty($json->items_code) && !empty($json->last_update) && !empty($json->system_version)) {
+                // unzip uploaded update file and remove zip file.
+                $zip = new ZipArchive;
+                $res = $zip->open($uploadPath . $zipped_fileName);
+                if ($res === true) {
+                    $fileName = trim($zip->getNameIndex(0), '/');
+                    $res = $zip->extractTo($uploadPath . $random_dir);
+                    $zip->close();
+                    unlink($uploadPath . $zipped_fileName);
+                    $configPath = "{$uploadPath}{$random_dir}/{$fileName}/config.json";
+                    if (file_exists($configPath)) {
+                        $config = file_get_contents($configPath);
+                        if (!empty($config)) {
+                            $json = json_decode($config);
+                            if (!empty($json->name) && !empty($json->version) && !empty($json->unique_prefix) && !empty($json->items_code) && !empty($json->last_update) && !empty($json->system_version)) {
 
-                            $current_version = $this->addons_model->get_current_db_version();
-                            if ($json->system_version > $current_version) {
-                                $this->addons_model->directoryRecursive($this->extractPath);
-                                $requiredSystem = wordwrap($json->system_version, 1, '.', true);
-                                $current_version = wordwrap($current_version, 1, '.', true);
-                                return ['status' => 'fail', 'message' => "Minimum System required version {$requiredSystem}, your running version {$current_version}"];
-                            }
-                            if ($this->addons_model->addonInstalled($json->unique_prefix)) {
-                                $array = [];
-                                $array['product_name'] = $json->name;
-                                $array['version'] = $json->version;
-                                $array['system_version'] = $json->system_version;
-                                $array['unique_prefix'] = $json->unique_prefix;
-                                $array['purchase_code'] = $purchaseCode;
-                                $apiResult = $this->addons_model->call_CurlApi($array);
-                                if (isset($apiResult->status) && $apiResult->status) {
-                                    if (!empty($apiResult->sql)) {
-                                        $sqlContent = $apiResult->sql;
-                                        $this->db->query('USE ' . $this->db->database . ';');
-                                        foreach (explode(";\n", $sqlContent) as $sql) {
-                                            $sql = trim($sql);
-                                            if ($sql) {
-                                                $this->db->query($sql);
+                                $current_version = $this->addons_model->get_current_db_version();
+                                if ($json->system_version > $current_version) {
+                                    $this->addons_model->directoryRecursive($this->extractPath);
+                                    $requiredSystem = wordwrap($json->system_version, 1, '.', true);
+                                    $current_version = wordwrap($current_version, 1, '.', true);
+                                    return ['status' => 'fail', 'message' => "Minimum System required version {$requiredSystem}, your running version {$current_version}"];
+                                }
+                                if ($this->addons_model->addonInstalled($json->unique_prefix)) {
+                                    $array = [];
+                                    $array['product_name'] = $json->name;
+                                    $array['version'] = $json->version;
+                                    $array['system_version'] = $json->system_version;
+                                    $array['unique_prefix'] = $json->unique_prefix;
+                                    $array['purchase_code'] = $purchaseCode;
+                                    $apiResult = $this->addons_model->call_CurlApi($array);
+                                    if (isset($apiResult->status) && $apiResult->status) {
+                                        if (!empty($apiResult->sql)) {
+                                            $sqlContent = $apiResult->sql;
+                                            $this->db->query('USE ' . $this->db->database . ';');
+                                            foreach (explode(";\n", $sqlContent) as $sql) {
+                                                $sql = trim($sql);
+                                                if ($sql) {
+                                                    $this->db->query($sql);
+                                                }
                                             }
-                                        }
 
-                                        // handel addon all directory and files
-                                        $this->addons_model->copyDirectory("{$uploadPath}{$random_dir}/{$fileName}/", './');
-                                        if (file_exists('./config.json')) {
-                                            unlink('./config.json');
-                                        }
-
-                                        // initClass script execute
-                                        if (!empty($json->initClass)) {
-                                            $initClassPath = FCPATH . "{$uploadPath}{$random_dir}/{$fileName}/{$json->initClass}";
-                                            if (file_exists($initClassPath) && is_readable($initClassPath) && include ($initClassPath)) {
-                                                $init = new InitClass();
-                                                $init->up();
-                                                unlink("./{$json->initClass}");
+                                            // handel addon all directory and files
+                                            $this->addons_model->copyDirectory("{$uploadPath}{$random_dir}/{$fileName}/", './');
+                                            if (file_exists('./config.json')) {
+                                                unlink('./config.json');
                                             }
+
+                                            // initClass script execute
+                                            if (!empty($json->initClass)) {
+                                                $initClassPath = FCPATH . "{$uploadPath}{$random_dir}/{$fileName}/{$json->initClass}";
+                                                if (file_exists($initClassPath) && is_readable($initClassPath) && include ($initClassPath)) {
+                                                    $init = new InitClass();
+                                                    $init->up();
+                                                    unlink("./{$json->initClass}");
+                                                }
+                                            }
+
+                                            //Insert addon details in DB
+                                            $arrayAddon = array(
+                                                'name' => $json->name,
+                                                'prefix' => $json->unique_prefix,
+                                                'version' => $json->version,
+                                                'purchase_code' => $purchaseCode,
+                                                'items_code' => $json->items_code,
+                                                'created_at' => date('Y-m-d H:i:s'),
+                                            );
+                                            $this->db->insert('addon', $arrayAddon);
+
+                                            $message = "<div class='alert alert-success mt-lg'><div>
+                                                <h4>Congratulations your {$json->name} has been successfully Installed.</h4>
+                                                <p>
+                                                    This window will reload automatically in 5 seconds. You are strongly recommended to manually clear your browser cache.
+                                                </p>
+                                            </div></div>";
+                                            $this->addons_model->directoryRecursive($this->extractPath);
+                                            return ['status' => 'success', 'message' => $message];
+                                        } else {
+                                            $this->addons_model->directoryRecursive($this->extractPath);
+                                            return ['status' => 'purchase_code', 'message' => 'SQL not found'];
                                         }
-
-                                        //Insert addon details in DB
-                                        $arrayAddon = array(
-                                            'name' => $json->name,
-                                            'prefix' => $json->unique_prefix,
-                                            'version' => $json->version,
-                                            'purchase_code' => $purchaseCode,
-                                            'items_code' => $json->items_code,
-                                            'created_at' => date('Y-m-d H:i:s'),
-                                        );
-                                        $this->db->insert('addon', $arrayAddon);
-
-                                        $message = "<div class='alert alert-success mt-lg'><div>
-                                            <h4>Congratulations your {$json->name} has been successfully Installed.</h4>
-                                            <p>
-                                                This window will reload automatically in 5 seconds. You are strongly recommended to manually clear your browser cache.
-                                            </p>
-                                        </div></div>";
-                                        $this->addons_model->directoryRecursive($this->extractPath);
-                                        return ['status' => 'success', 'message' => $message];
                                     } else {
                                         $this->addons_model->directoryRecursive($this->extractPath);
-                                        return ['status' => 'purchase_code', 'message' => 'SQL not found'];
+                                        return ['status' => 'purchase_code', 'message' => $apiResult->message];
                                     }
                                 } else {
+                                    // This addon already installed
                                     $this->addons_model->directoryRecursive($this->extractPath);
-                                    return ['status' => 'purchase_code', 'message' => $apiResult->message];
+                                    return ['status' => 'fail', 'message' => "This addon already installed."];
                                 }
                             } else {
-                                // This addon already installed
+                                // Invalid JSON
                                 $this->addons_model->directoryRecursive($this->extractPath);
-                                return ['status' => 'fail', 'message' => "This addon already installed."];
+                                return ['status' => 'fail', 'message' => "Invalid config JSON."];
                             }
                         } else {
-                            // Invalid JSON
+                            // JSON content is empty
                             $this->addons_model->directoryRecursive($this->extractPath);
-                            return ['status' => 'fail', 'message' => "Invalid config JSON."];
+                            return ['status' => 'fail', 'message' => "JSON content is empty."];
                         }
                     } else {
-                        // JSON content is empty
+                        // Config file does not exist
                         $this->addons_model->directoryRecursive($this->extractPath);
-                        return ['status' => 'fail', 'message' => "JSON content is empty."];
+                        return ['status' => 'fail', 'message' => "Config file does not exist."];
                     }
                 } else {
-                    // Config file does not exist
-                    $this->addons_model->directoryRecursive($this->extractPath);
-                    return ['status' => 'fail', 'message' => "Config file does not exist."];
+                    unlink($uploadPath . $zipped_fileName);
+                    return ['status' => 'fail', 'message' => "Zip extract fail."];
                 }
             } else {
-                unlink($uploadPath . $zipped_fileName);
-                return ['status' => 'fail', 'message' => "Zip extract fail."];
+                return ['status' => 'fail', 'message' => $this->upload->display_errors('<p>', '</p>')];
             }
         }
     }

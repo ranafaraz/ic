@@ -1,5 +1,5 @@
 <!-- Web Fonts  -->
-<link href="<?php echo is_secure('fonts.googleapis.com/css?family=Signika:300,400,600,700');?>" rel="stylesheet"> 
+<link href="<?php echo is_secure('fonts.googleapis.com/css?family=Signika:wght@300..700&display=swap');?>" rel="stylesheet"> 
 <link rel="stylesheet" href="<?php echo base_url('assets/vendor/bootstrap/css/bootstrap.css');?>">
 <?php if ($this->app_lib->isRTLenabled()) { ?>
 <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.rtl.min.css');?>">

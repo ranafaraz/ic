@@ -84,7 +84,7 @@
 					<th><?php echo translate('date'); ?></th>
 					<th><?php echo translate('net') . " " . translate('payable'); ?></th>
 					<th><?php echo translate('total') . " " . translate('paid'); ?></th>
-					<th><?php echo translate('total') . " " . translate('due'); ?></th>
+					<th class="isExport"><?php echo translate('total') . " " . translate('due'); ?></th>
 
 				</tr>
 			</thead>

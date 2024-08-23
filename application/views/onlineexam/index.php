@@ -49,7 +49,7 @@
 								<?php
 									$arrayBranch = $this->app_lib->getSelectList('branch');
 									echo form_dropdown("branch_id", $arrayBranch, set_value('branch_id'), "class='form-control' data-width='100%' onchange='getClassByBranch(this.value)'
-									data-plugin-selectTwo  data-minimum-results-for-search='Infinity'");
+									data-plugin-selectTwo");
 								?>
 								<span class="error"></span>
 							</div>
@@ -68,7 +68,7 @@
 							<?php
 								$arrayClass = $this->app_lib->getClass($branch_id);
 								echo form_dropdown("class_id", $arrayClass, set_value('class_id'), "class='form-control' id='class_id' onchange='getSectionByClass(this.value,0,1)'
-								data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity' ");
+								data-plugin-selectTwo data-width='100%' ");
 							?>
 							<span class="error"></span>
 						</div>

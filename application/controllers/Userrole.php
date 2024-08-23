@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 6.8
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -32,6 +32,7 @@ class Userrole extends User_Controller
     public function teacher()
     {
         $this->data['title'] = translate('teachers');
+        $this->data['getSchoolConfig'] = $this->app_lib->getSchoolConfig('','teacher_mobile_visible,teacher_email_visible');
         $this->data['sub_page'] = 'userrole/teachers';
         $this->data['main_menu'] = 'teachers';
         $this->load->view('layout/index', $this->data);
@@ -404,8 +405,8 @@ class Userrole extends User_Controller
         $this->data['config'] = $this->get_payment_config();
         $this->data['getUser'] = $this->userrole_model->getUserDetails();
         $this->data['getOfflinePaymentsConfig'] = $this->userrole_model->getOfflinePaymentsConfig();
-        $this->data['invoice'] = $this->fees_model->getInvoiceStatus($stu['student_id']);
-        $this->data['basic'] = $this->fees_model->getInvoiceBasic($stu['student_id']);
+        $this->data['invoice'] = $this->fees_model->getInvoiceStatus($stu['enroll_id']);
+        $this->data['basic'] = $this->fees_model->getInvoiceBasic($stu['enroll_id']);
         $this->data['title'] = translate('fees_history');
         $this->data['main_menu'] = 'fees';
         $this->data['sub_page'] = 'userrole/collect';
@@ -425,7 +426,7 @@ class Userrole extends User_Controller
     public function homework()
     {
         $stu = $this->userrole_model->getStudentDetails();
-        $this->data['homeworklist'] = $this->userrole_model->getHomeworkList($stu['student_id']);
+        $this->data['homeworklist'] = $this->userrole_model->getHomeworkList($stu['enroll_id']);
         $this->data['title'] = translate('homework');
         $this->data['headerelements'] = array(
             'css' => array(
@@ -901,5 +902,60 @@ class Userrole extends User_Controller
             $fine = abs($fine - $b['fine']);
         }
         echo json_encode(array('balance' => $balance, 'fine' => $fine));
+    }
+
+    public function switchClass($enrollID = '')
+    {
+        $enrollID = $this->security->xss_clean($enrollID);
+        if (!empty($enrollID) && is_student_loggedin()) {
+            $getRow = $this->db->where('id', $enrollID)->get('enroll')->row();
+            if (!empty($getRow) && ($getRow->student_id == get_loggedin_user_id())) {
+
+                $this->db->where('student_id', $getRow->student_id);
+                $this->db->where('session_id', $getRow->session_id);
+                $this->db->update('enroll', ['default_login' => 0]);
+               
+                $this->db->where('id', $enrollID);
+                $this->db->update('enroll', ['default_login' => 1]);
+
+                $this->session->set_userdata('enrollID', $enrollID);
+                if (!empty($_SERVER['HTTP_REFERER'])) {
+                    redirect($_SERVER['HTTP_REFERER']);
+                } else {
+                    redirect(base_url('dashboard'), 'refresh');
+                }
+            } else {
+                redirect(base_url('dashboard'), 'refresh');
+            }
+        } else {
+            redirect(base_url(), 'refresh');
+        }
+    }
+
+    public function subject_wise_attendance()
+    {
+        $getAttendanceType = $this->app_lib->getAttendanceType();
+        if ($getAttendanceType != 2 && $getAttendanceType != 1) {
+            access_denied();
+        }
+        $this->load->model('attendance_period_model');
+        $this->load->model('subject_model');
+        $this->load->model('attendance_model');
+        $getStudentDetails = $this->userrole_model->getStudentDetails();
+        $branchID = $getStudentDetails['branch_id'];
+        $this->data['class_id'] = $getStudentDetails['class_id'];
+        $this->data['section_id'] = $getStudentDetails['section_id'];
+        if ($_POST) {
+            $this->data['subject_id'] = $this->input->post('subject_id');
+            $this->data['month'] = date('m', strtotime($this->input->post('timestamp')));
+            $this->data['year'] = date('Y', strtotime($this->input->post('timestamp')));
+            $this->data['days'] = date('t', strtotime($this->data['year'] . "-" . $this->data['month']));
+            $this->data['studentDetails'] = $getStudentDetails;
+        }
+        $this->data['branch_id'] = $branchID;
+        $this->data['title'] = translate('subject_wise_attendance');
+        $this->data['sub_page'] = 'userrole/subject_wise_attendance';
+        $this->data['main_menu'] = 'attendance';
+        $this->load->view('layout/index', $this->data);
     }
 }
