@@ -138,6 +138,74 @@ To set up the IC system using Docker, follow these steps:
 
 5. **Access the application:**
     - Open your web browser and navigate to `http://localhost:8000`
+  
+## Steps to Deploy the Docker Images
+1. Login to Docker Hub (if needed):
+If you haven't logged in already, log into Docker Hub:
+```bash
+docker login
+```
+Enter your Docker Hub credentials.
+
+2. Pull the Images from Docker Hub:
+On the target machine where you want to deploy the application, run the following commands to pull all the images:
+```bash
+docker pull ranafarazahmed/ic:ic-app-tagname
+docker pull ranafarazahmed/ic:mysql-tagname
+docker pull ranafarazahmed/ic:phpmyadmin-tagname
+```
+Replace ic-app-tagname, mysql-tagname, and phpmyadmin-tagname with the actual tag names you used when pushing the images.
+
+3. Create a docker-compose.yml for Deployment:
+
+You can now create a new docker-compose.yml file to run the pulled images as containers.
+
+Example docker-compose.yml:
+```yaml
+version: '3.8'
+
+services:
+  ic-app:
+    image: ranafarazahmed/ic:ic-app-tagname
+    ports:
+      - "2027:80"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: ranafarazahmed/ic:mysql-tagname
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: ic_db
+      MYSQL_USER: testcase
+      MYSQL_PASSWORD: testcase
+    ports:
+      - "3307:3306"
+
+  phpmyadmin:
+    image: ranafarazahmed/ic:phpmyadmin-tagname
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "8081:80"
+
+networks:
+  default:
+    driver: bridge
+```
+
+4. Start the Containers:
+Once the docker-compose.yml file is ready, you can start the application using:
+```bash
+docker-compose up -d
+```
+This command will start the containers in detached mode (in the background). The application should now be running with your previously pushed images.
+
+5. Verify the Deployment:
+- The application should be accessible on http://<server_ip>:2027.
+- phpMyAdmin should be accessible on http://<server_ip>:8081.
+- MySQL will be running on port 3307 and can be accessed internally by the ic-app service.
 
 ## Usage
 
