@@ -1,16 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-/**
- * @package : Ramom school management system
- * @version : 6.5
- * @developed by : RamomCoder
- * @support : ramomcoder@yahoo.com
- * @author url : http://codecanyon.net/user/RamomCoder
- * @filename : School_settings.php
- * @copyright : Reserved RamomCoder Team
- */
-
 class School_settings extends Admin_Controller
 {
     public function __construct()

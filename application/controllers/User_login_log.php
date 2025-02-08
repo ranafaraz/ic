@@ -1,16 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-/**
- * @package : Ramom school management system
- * @version : 6.5
- * @developed by : RamomCoder
- * @support : ramomcoder@yahoo.com
- * @author url : http://codecanyon.net/user/RamomCoder
- * @filename : User_login_log.php
- * @copyright : Reserved RamomCoder Team
- */
-
 class User_login_log extends Admin_Controller
 {
     public function __construct()
